@@ -4,23 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Work Planner Dashboard Fixed</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#050505">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Work Planner">
-<link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{--bg:#050505;--panel:#101010;--cell:#060606;--line:#252525;--text:#f4f4f4;--muted:#9b9b9b;--green:#00d084;--blue:#00a6ff;--purple:#8b5cf6;--red:#ef4444;--paper:#fbf0d8;--ink:#332719}
 *{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;overflow:hidden}.app{height:100vh;max-width:1400px;margin:auto;padding:8px;display:grid;grid-template-rows:auto auto 1fr 190px;gap:8px}.top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:42px}h1{font-size:30px;font-weight:400;margin:0}.buttons,.views{display:flex;gap:7px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:9px 11px;background:#2b2b2b;color:#fff;font-weight:bold;font-size:14px}.active{background:var(--green);color:#001b10}.blue{background:var(--blue)}.danger{background:var(--red)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:8px}.stat{background:#111;border:1px solid var(--line);border-radius:11px;padding:6px 8px}.stat .label{font-size:10px;color:var(--muted)}.stat .val{font-size:17px;color:var(--green);font-weight:bold}.main{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:8px}.calendar{min-height:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#111}.days,.month{display:grid;grid-template-columns:repeat(7,1fr)}.dayname{padding:7px;color:var(--muted);border-bottom:1px solid var(--line);font-weight:bold;font-size:12px}.month{height:calc(100% - 31px)}.day{min-height:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#050505;padding:4px;overflow:hidden;cursor:pointer}.day:nth-child(7n){border-right:0}.num{font-size:11px;color:var(--muted)}.outside{opacity:.45}.selected{background:#2c2c2c}.today{outline:2px solid var(--blue);outline-offset:-2px}.event{font-size:11px;border-radius:4px;padding:2px 4px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--blue)}.event.done{background:var(--green);color:#001b10}.event.unpaid{background:var(--purple)}.week,.daily{height:100%;display:grid;gap:7px;padding:8px}.week{grid-template-columns:repeat(7,1fr)}.weekbox,.daybox{background:#080808;border:1px solid var(--line);border-radius:12px;padding:9px;overflow:auto}.weekbox b{color:var(--green)}.side{min-height:0;background:var(--paper);color:var(--ink);border:2px solid #d4bc91;border-radius:22px;padding:10px;display:grid;grid-template-rows:auto auto 88px 1fr auto;gap:6px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}.side h2{text-align:center;font-size:32px;letter-spacing:4px;font-family:Georgia,serif;font-weight:400;margin:0;color:#7d5c36}.sideDate{text-align:center;font-weight:bold;font-size:12px;color:#7a5b37}.sideList{border-top:1px solid #d5be92;border-bottom:1px solid #d5be92;overflow:auto;padding:4px}.sideItem{padding:5px 2px;border-bottom:1px solid #dccaa3;cursor:pointer}.sideItem strong{display:block;font-size:13px}.sideItem span{font-size:11px;color:#705536}.formScroll{min-height:0;overflow:auto;padding-right:3px}label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#777;margin:5px 0 2px}input,select,textarea{width:100%;border:1px solid #444;background:#1f1f1f;color:#fff;border-radius:7px;padding:6px;font-size:13px}textarea{min-height:42px;resize:vertical}.side input,.side select,.side textarea{background:#fffaf0;color:#2e2117;border-color:#c7ad7e}.r2{display:grid;grid-template-columns:1fr 1fr;gap:5px}.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}.payProject{display:none}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:8px 10px}.chartPanel{min-height:0;background:#050505;border:1px solid var(--line);border-radius:12px;padding:5px;overflow:auto;display:grid;grid-template-rows:auto auto 1fr;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}.chartTitle{display:flex;justify-content:space-between;align-items:center;gap:7px;flex-wrap:wrap}.chartTitle h2{margin:0;font-size:18px}.chartHead,.chartRow{display:grid;grid-template-columns:88px 78px 72px 72px 48px 62px 48px 78px 76px 150px 150px 1fr 115px 90px;gap:3px;min-width:1320px}.chartHead{color:#aaa;font-size:10px;text-transform:uppercase;padding:3px;overflow:hidden}.chartRows{overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;min-height:0}.chartRow{background:#262626;border-radius:5px;margin:3px 0;padding:3px;align-items:center}.chartRow input,.chartRow textarea,.chartRow select{font-size:12px;padding:5px;border-radius:5px}.chartRow textarea{min-height:28px}.small{font-size:11px;color:#999}.side .small{color:#72583a}
 .clientMatches{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.clientMatches button{font-size:11px;padding:5px 7px;background:#d8c296;color:#2e2117;border:1px solid #b99b62}.clientTotals{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px}.clientTotals div{background:#ead8b4;border:1px solid #c5a76f;border-radius:8px;padding:5px;text-align:center}.clientTotals span{display:block;font-size:9px;text-transform:uppercase;color:#775b36}.clientTotals b{font-size:12px;color:#2e2117}
 @media(max-width:900px){html,body{overflow:auto}.app{height:auto;min-height:100vh;grid-template-rows:auto auto auto auto}.main{grid-template-columns:1fr}.calendar{height:520px}.side{height:720px}.stats{grid-template-columns:repeat(3,1fr)}.week{grid-template-columns:1fr}.chartPanel{height:300px;overflow:auto}h1{font-size:26px}}
 </style>
+
+<style id="serviceInvoiceStyles">
+.invoicePage{min-height:0;background:#050505;border:1px solid var(--line);border-radius:14px;padding:8px;overflow:auto}
+.invoiceTop{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.invoiceTop h2{margin:0}
+.invoiceLayout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:8px}.invoiceBuilder,.invoicePreview,.allInvoices{background:#101010;border:1px solid var(--line);border-radius:14px;padding:10px;overflow:auto}.invoiceBuilder,.invoicePreview{max-height:calc(100vh - 190px)}
+.serviceChecklist{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:6px 0}.serviceCheck{background:#1d1d1d;border:1px solid #333;border-radius:8px;padding:6px;font-size:12px}.serviceCheck input{width:auto;margin-right:4px}
+.serviceAddBox{display:grid;grid-template-columns:1fr auto;gap:6px;margin:8px 0}.serviceLine{background:#1d1d1d;border:1px solid #333;border-radius:10px;padding:7px;margin:6px 0}.serviceLineTop{display:flex;justify-content:space-between;gap:6px;align-items:center}.serviceLineTop b{color:#00d084}.serviceGrid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-top:6px}
+.invoiceTotalsBox{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.invoiceTotalsBox div{background:#1d1d1d;border:1px solid #333;border-radius:10px;padding:7px;text-align:center}.invoiceTotalsBox span{display:block;color:#999;font-size:11px}.invoiceTotalsBox b{color:#00d084}
+.signaturePad{width:100%;height:130px;background:#fff;border:2px solid #777;border-radius:10px;touch-action:none}.invoicePaper{background:#fff;color:#111;border-radius:10px;padding:14px;min-height:400px}.invoicePaper h2,.invoicePaper h3{color:#111;margin:4px 0}.invoiceLine{display:grid;grid-template-columns:1fr 60px 60px 70px;gap:5px;border-bottom:1px solid #ddd;padding:5px 0;font-size:13px}.invoiceLine.head{font-weight:bold;background:#eee}.invoiceStatusCard{border-radius:10px;padding:8px;margin:6px 0;color:#111}.invoiceStatusCard.paid{background:#dcfce7;border:1px solid #16a34a}.invoiceStatusCard.unpaid{background:#fee2e2;border:1px solid #dc2626}.clientInvoiceGroup{border:1px solid #333;border-radius:12px;margin:8px 0;padding:8px;background:#111}.invoiceCard{padding:7px;border-radius:8px;margin:5px 0;cursor:pointer;color:#111}.invoiceCard.paid{background:#dcfce7}.invoiceCard.unpaid{background:#fee2e2}
+@media(max-width:900px){.invoiceLayout{grid-template-columns:1fr}.serviceChecklist{grid-template-columns:repeat(2,1fr)}.serviceGrid{grid-template-columns:1fr 1fr}.invoiceBuilder,.invoicePreview{max-height:none}.invoicePage{overflow:visible}}
+</style>
+
 </head>
 <body>
 <div class="app">
 <div class="top"><h1 id="title"></h1><div class="buttons"><button onclick="prev()">‹</button><button onclick="today()">Today</button><button onclick="next()">›</button><button class="blue" onclick="newJob()">+ Job</button></div></div>
-<div class="views"><span class="small" style="align-self:center;color:#00d084;font-weight:bold;">Offline HTML Widget</span><button id="mb" onclick="setView('month')">Monthly</button><button id="wb" onclick="setView('week')">Weekly</button><button id="db" onclick="setView('day')">Daily</button><button onclick="exportCSV()">Export CSV</button></div>
+<div class="views"><span class="small" style="align-self:center;color:#00d084;font-weight:bold;">Offline HTML Widget</span><button id="mb" onclick="setView('month')">Monthly</button><button id="wb" onclick="setView('week')">Weekly</button><button id="db" onclick="setView('day')">Daily</button><button onclick="exportCSV()">Export CSV</button><button onclick="showMainTab(\'planner\')" id="plannerTabBtn" class="active">Planner</button><button onclick="showMainTab(\'invoices\')" id="invoiceTabBtn">Invoices</button></div>
 <div class="stats"><div class="stat"><div class="label">Total Hours Worked</div><div class="val" id="sWorked">0</div></div><div class="stat"><div class="label">Total Amount Paid</div><div class="val" id="sPaid">$0</div></div><div class="stat"><div class="label">Total Amount Owed</div><div class="val" id="sOwed">$0</div></div></div>
 <div class="main">
 <div id="cal" class="calendar"></div>
@@ -54,8 +60,83 @@
 <div class="chartPanel"><div class="chartTitle"><h2>Completed / Job Info Chart</h2><input id="search" placeholder="Search..." oninput="renderChart()" style="max-width:220px"></div>
 <div class="chartHead"><div>Date</div><div>Status</div><div>In</div><div>Out</div><div>Hrs</div><div>Owed</div><div>Paid</div><div>How Paid</div><div>Received</div><div>Needed</div><div>Used</div><div>Work</div><div>Client</div><div>Phone</div></div><div id="chartRows" class="chartRows"></div></div>
 </div>
+
+<div id="invoiceTab" class="invoicePage" style="display:none">
+  <div class="invoiceTop">
+    <h2>Invoices / Services</h2>
+    <div>
+      <button class="blue" onclick="newInvoice()">+ New Invoice</button>
+      <button onclick="exportInvoicesCSV()">Export Invoices</button>
+    </div>
+  </div>
+
+  <div class="invoiceLayout">
+    <div class="invoiceBuilder">
+      <h3>Service / Duty Builder</h3>
+      <input type="hidden" id="invoiceId">
+
+      <label>Client Name</label>
+      <input id="invoiceClient" list="invoiceClientNames" placeholder="Start typing client name..." onchange="invoiceFillClient()" oninput="renderInvoicePreview()">
+      <datalist id="invoiceClientNames"></datalist>
+
+      <div class="r2">
+        <div><label>Client Address</label><input id="invoiceAddress" oninput="renderInvoicePreview()"></div>
+        <div><label>Client Phone</label><input id="invoicePhone" oninput="renderInvoicePreview()"></div>
+      </div>
+
+      <label>Invoice / Job Date</label>
+      <input id="invoiceDate" type="date" onchange="renderInvoicePreview()">
+
+      <h4>Duties / Services</h4>
+      <div id="serviceChecklist" class="serviceChecklist"></div>
+
+      <div class="serviceAddBox">
+        <input id="newServiceName" placeholder="Add service">
+        <button onclick="addService()">Add Service</button>
+      </div>
+
+      <div id="serviceLines"></div>
+
+      <div class="invoiceTotalsBox">
+        <div><span>Subtotal</span><b id="invoiceSubtotal">$0.00</b></div>
+        <div><span>Paid</span><b id="invoicePaidDisplay">$0.00</b></div>
+        <div><span>Balance</span><b id="invoiceBalance">$0.00</b></div>
+      </div>
+
+      <div class="r3">
+        <div><label>Status</label><select id="invoiceStatus" onchange="calcInvoiceTotal()"><option value="unpaid">Unpaid</option><option value="paid">Paid</option></select></div>
+        <div><label>How Paid</label><select id="invoiceHowPaid" onchange="renderInvoicePreview()"><option></option><option>Cash</option><option>Check</option><option>Cash App</option><option>PayPal</option><option>Venmo</option><option>Transfer</option><option>Other</option></select></div>
+        <div><label>Amount Paid</label><input id="invoiceAmountPaid" type="number" step="0.01" oninput="calcInvoiceTotal()"></div>
+      </div>
+
+      <label>Notes</label>
+      <textarea id="invoiceNotes" placeholder="Extra notes" oninput="renderInvoicePreview()"></textarea>
+
+      <h4>Client Signature</h4>
+      <p class="small">Client signs here when job is completed and paid.</p>
+      <canvas id="signaturePad" class="signaturePad"></canvas>
+
+      <div class="actions">
+        <button onclick="clearSignature()">Clear Signature</button>
+        <button class="active" onclick="saveInvoice()">Save Invoice</button>
+        <button class="danger" onclick="deleteInvoice()">Delete Invoice</button>
+      </div>
+    </div>
+
+    <div class="invoicePreview">
+      <h3>Invoice Preview / Receipt</h3>
+      <div id="invoicePreviewBox" class="invoicePaper"></div>
+    </div>
+  </div>
+
+  <div class="allInvoices">
+    <h3>All Invoices</h3>
+    <div id="allInvoicesList"></div>
+  </div>
+</div>
+
 <script>
-const STORAGE='work_planner_final_clean_v1';
+const STORAGE='work_planner_services_invoice_v2';
 let state=JSON.parse(localStorage.getItem(STORAGE)||'null')||{
  view:'month',current:'2026-05-01T12:00:00',selected:iso(new Date()),people:['Me'],
  jobs:[]};
@@ -350,12 +431,45 @@ document.addEventListener('change',function(e){
 });
 </script>
 
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
-  });
+<script id="serviceInvoiceScript">
+let services = JSON.parse(localStorage.getItem('work_planner_services_v2') || 'null') || ['Weed eating','Mowing','Trimming','Leaf blowing','Gutters','Debris removal','Landscaping','Painting','Repair','Organizing','Moving','Hauling'];
+let invoices = JSON.parse(localStorage.getItem('work_planner_invoices_v2') || '[]');
+let activeLines = [];
+let sigCanvas, sigCtx, sigDrawing=false;
+
+function saveInvoiceState(){localStorage.setItem('work_planner_services_v2',JSON.stringify(services));localStorage.setItem('work_planner_invoices_v2',JSON.stringify(invoices));}
+function showMainTab(tab){
+  [document.querySelector('.main'),document.querySelector('.chartPanel'),document.querySelector('.stats')].forEach(el=>{if(el)el.style.display=tab==='planner'?'':'none'});
+  const inv=document.getElementById('invoiceTab'); if(inv)inv.style.display=tab==='invoices'?'block':'none';
+  const p=document.getElementById('plannerTabBtn'), i=document.getElementById('invoiceTabBtn'); if(p)p.className=tab==='planner'?'active':''; if(i)i.className=tab==='invoices'?'active':'';
+  if(tab==='invoices'){renderServices();renderInvoiceClientOptions();renderAllInvoices();setupSignature();if(!document.getElementById('invoiceDate').value)newInvoice();}
 }
+function renderServices(){
+  const box=document.getElementById('serviceChecklist'); if(!box)return;
+  box.innerHTML=services.map(s=>`<label class="serviceCheck"><input type="checkbox" onchange="toggleServiceLine('${String(s).replaceAll("'","&#39;")}',this.checked)" ${activeLines.some(l=>l.name===s)?'checked':''}> ${esc(s)}</label>`).join('');
+}
+function addService(){const n=(document.getElementById('newServiceName').value||'').trim();if(!n)return;if(!services.includes(n))services.push(n);document.getElementById('newServiceName').value='';saveInvoiceState();renderServices();}
+function toggleServiceLine(name,on){if(on){if(!activeLines.some(l=>l.name===name))activeLines.push({name,measureType:'sq ft',size:'',rate:'',price:'',notes:''});}else activeLines=activeLines.filter(l=>l.name!==name);renderServiceLines();calcInvoiceTotal();}
+function renderServiceLines(){
+ const box=document.getElementById('serviceLines'); if(!box)return;
+ box.innerHTML=activeLines.map((l,idx)=>`<div class="serviceLine"><div class="serviceLineTop"><b>${esc(l.name)}</b><button class="danger" onclick="removeServiceLine(${idx})">Remove</button></div><div class="serviceGrid"><div><label>Size / Area / Distance</label><input type="number" step="0.01" value="${esc(l.size)}" oninput="activeLines[${idx}].size=this.value;calcLine(${idx})"></div><div><label>Type</label><select onchange="activeLines[${idx}].measureType=this.value;renderInvoicePreview()"><option ${l.measureType==='sq ft'?'selected':''}>sq ft</option><option ${l.measureType==='room'?'selected':''}>room</option><option ${l.measureType==='linear ft'?'selected':''}>linear ft</option><option ${l.measureType==='mile'?'selected':''}>mile</option><option ${l.measureType==='flat'?'selected':''}>flat</option></select></div><div><label>Rate</label><input type="number" step="0.01" value="${esc(l.rate)}" oninput="activeLines[${idx}].rate=this.value;calcLine(${idx})"></div><div><label>Price</label><input type="number" step="0.01" value="${esc(l.price)}" oninput="activeLines[${idx}].price=this.value;calcInvoiceTotal()"></div></div><label>Service Notes</label><input value="${esc(l.notes)}" oninput="activeLines[${idx}].notes=this.value;renderInvoicePreview()"></div>`).join('');
+}
+function removeServiceLine(idx){activeLines.splice(idx,1);renderServices();renderServiceLines();calcInvoiceTotal();}
+function calcLine(idx){const l=activeLines[idx], size=Number(l.size||0), rate=Number(l.rate||0);l.price=(size*rate).toFixed(2);renderServiceLines();calcInvoiceTotal();}
+function calcInvoiceTotal(){const subtotal=activeLines.reduce((s,l)=>s+Number(l.price||0),0), paid=Number(document.getElementById('invoiceAmountPaid')?.value||0), bal=Math.max(subtotal-paid,0);document.getElementById('invoiceSubtotal').textContent=money(subtotal);document.getElementById('invoicePaidDisplay').textContent=money(paid);document.getElementById('invoiceBalance').textContent=money(bal);const st=document.getElementById('invoiceStatus');if(st&&paid>=subtotal&&subtotal>0)st.value='paid';renderInvoicePreview();}
+function newInvoice(){document.getElementById('invoiceId').value='';document.getElementById('invoiceClient').value='';document.getElementById('invoiceAddress').value='';document.getElementById('invoicePhone').value='';document.getElementById('invoiceDate').value=iso(new Date());document.getElementById('invoiceStatus').value='unpaid';document.getElementById('invoiceHowPaid').value='';document.getElementById('invoiceAmountPaid').value='';document.getElementById('invoiceNotes').value='';activeLines=[];renderServices();renderServiceLines();clearSignature(false);calcInvoiceTotal();}
+function renderInvoiceClientOptions(){const names=new Set();try{if(typeof clientMap==='function')Object.keys(clientMap()).forEach(n=>names.add(n));}catch(e){}invoices.forEach(inv=>{if(inv.client)names.add(inv.client)});const list=document.getElementById('invoiceClientNames');if(list)list.innerHTML=[...names].sort().map(n=>`<option value="${esc(n)}"></option>`).join('');}
+function invoiceFillClient(){const name=(document.getElementById('invoiceClient').value||'').trim();let c=null;try{const m=clientMap(); if(m[name])c=m[name];}catch(e){}if(!c){const found=[...invoices].reverse().find(i=>i.client===name); if(found)c=found;}if(c){document.getElementById('invoiceAddress').value=c.address||'';document.getElementById('invoicePhone').value=c.phone||'';}renderInvoicePreview();}
+function invoiceObject(){const subtotal=activeLines.reduce((s,l)=>s+Number(l.price||0),0), paid=Number(document.getElementById('invoiceAmountPaid').value||0);return{id:document.getElementById('invoiceId').value||uid(),client:document.getElementById('invoiceClient').value.trim(),address:document.getElementById('invoiceAddress').value,phone:document.getElementById('invoicePhone').value,date:document.getElementById('invoiceDate').value||iso(new Date()),lines:JSON.parse(JSON.stringify(activeLines)),subtotal,status:document.getElementById('invoiceStatus').value,howPaid:document.getElementById('invoiceHowPaid').value,amountPaid:paid,balance:Math.max(subtotal-paid,0),notes:document.getElementById('invoiceNotes').value,signature:sigCanvas?sigCanvas.toDataURL('image/png'):''};}
+function saveInvoice(){const inv=invoiceObject();const idx=invoices.findIndex(i=>i.id===inv.id);if(idx>=0)invoices[idx]=inv;else invoices.push(inv);document.getElementById('invoiceId').value=inv.id;saveInvoiceState();renderAllInvoices();renderInvoicePreview();alert('Invoice saved');}
+function deleteInvoice(){const id=document.getElementById('invoiceId').value;if(!id)return;invoices=invoices.filter(i=>i.id!==id);saveInvoiceState();newInvoice();renderAllInvoices();}
+function loadInvoice(id){const inv=invoices.find(i=>i.id===id);if(!inv)return;document.getElementById('invoiceId').value=inv.id;document.getElementById('invoiceClient').value=inv.client||'';document.getElementById('invoiceAddress').value=inv.address||'';document.getElementById('invoicePhone').value=inv.phone||'';document.getElementById('invoiceDate').value=inv.date||iso(new Date());document.getElementById('invoiceStatus').value=inv.status||'unpaid';document.getElementById('invoiceHowPaid').value=inv.howPaid||'';document.getElementById('invoiceAmountPaid').value=inv.amountPaid||'';document.getElementById('invoiceNotes').value=inv.notes||'';activeLines=JSON.parse(JSON.stringify(inv.lines||[]));renderServices();renderServiceLines();setupSignature();clearSignature(false);if(inv.signature){const img=new Image();img.onload=()=>sigCtx.drawImage(img,0,0,sigCanvas.width,sigCanvas.height);img.src=inv.signature;}calcInvoiceTotal();}
+function renderInvoicePreview(){const box=document.getElementById('invoicePreviewBox');if(!box)return;const inv=invoiceObject();box.innerHTML=`<h2>Work Invoice / Receipt</h2><p><b>Date:</b> ${esc(inv.date)}<br><b>Client:</b> ${esc(inv.client||'')}${inv.phone?`<br><b>Phone:</b> ${esc(inv.phone)}`:''}${inv.address?`<br><b>Address:</b> ${esc(inv.address)}`:''}</p><div class="invoiceStatusCard ${inv.status==='paid'?'paid':'unpaid'}"><b>${inv.status==='paid'?'PAID':'UNPAID'}</b> — Balance: ${money(inv.balance)}</div><div class="invoiceLine head"><div>Service</div><div>Size</div><div>Rate</div><div>Price</div></div>${inv.lines.map(l=>`<div class="invoiceLine"><div>${esc(l.name)}<br><small>${esc(l.measureType||'')} ${esc(l.notes||'')}</small></div><div>${esc(l.size||'')}</div><div>${money(l.rate||0)}</div><div>${money(l.price||0)}</div></div>`).join('')}<h3>Total: ${money(inv.subtotal)}</h3><p><b>Paid:</b> ${money(inv.amountPaid)} ${inv.howPaid?`by ${esc(inv.howPaid)}`:''}<br><b>Still Owed:</b> ${money(inv.balance)}</p>${inv.notes?`<p><b>Notes:</b> ${esc(inv.notes)}</p>`:''}<p><b>Client signature:</b></p>${sigCanvas?`<img src="${sigCanvas.toDataURL('image/png')}" style="max-width:100%;border:1px solid #ccc">`:''}`;}
+function renderAllInvoices(){const box=document.getElementById('allInvoicesList');if(!box)return;const groups={};invoices.forEach(inv=>{const n=inv.client||'Unnamed Client';if(!groups[n])groups[n]=[];groups[n].push(inv);});box.innerHTML=Object.keys(groups).sort().map(name=>{const arr=groups[name],paid=arr.reduce((s,i)=>s+Number(i.amountPaid||0),0),owed=arr.reduce((s,i)=>s+Number(i.balance||0),0);return`<div class="clientInvoiceGroup"><h4>${esc(name)}</h4><p class="small">Invoices: ${arr.length} • Paid ${money(paid)} • Owed ${money(owed)}</p>${arr.map(inv=>`<div class="invoiceCard ${inv.status==='paid'?'paid':'unpaid'}" onclick="loadInvoice('${inv.id}')"><b>${esc(inv.date)}</b> — ${money(inv.subtotal)} — ${inv.status==='paid'?'PAID':'UNPAID'}</div>`).join('')}</div>`}).join('')||'<p class="small">No invoices yet.</p>';}
+function exportInvoicesCSV(){const h=['Invoice ID','Date','Client','Address','Phone','Status','Subtotal','Paid','Balance','How Paid','Services','Notes'];const csv=[h.join(',')].concat(invoices.map(inv=>[inv.id,inv.date,inv.client,inv.address,inv.phone,inv.status,inv.subtotal,inv.amountPaid,inv.balance,inv.howPaid,(inv.lines||[]).map(l=>`${l.name} ${l.size} ${l.measureType} @ ${l.rate} = ${l.price}`).join(' | '),inv.notes].map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(','))).join('\\n');const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='invoices.csv';a.click();URL.revokeObjectURL(url);}
+function setupSignature(){sigCanvas=document.getElementById('signaturePad');if(!sigCanvas)return;const rect=sigCanvas.getBoundingClientRect();sigCanvas.width=Math.max(300,Math.floor(rect.width*2));sigCanvas.height=260;sigCtx=sigCanvas.getContext('2d');sigCtx.lineWidth=4;sigCtx.lineCap='round';sigCtx.strokeStyle='#111';sigCanvas.onpointerdown=e=>{sigDrawing=true;const p=sigPoint(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y)};sigCanvas.onpointermove=e=>{if(!sigDrawing)return;const p=sigPoint(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke()};sigCanvas.onpointerup=()=>{sigDrawing=false;renderInvoicePreview()};sigCanvas.onpointerleave=()=>sigDrawing=false;}
+function sigPoint(e){const r=sigCanvas.getBoundingClientRect();return{x:(e.clientX-r.left)*(sigCanvas.width/r.width),y:(e.clientY-r.top)*(sigCanvas.height/r.height)}}
+function clearSignature(update=true){if(!sigCanvas)setupSignature();if(sigCtx){sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);if(update)renderInvoicePreview();}}
 </script>
 
 </body>

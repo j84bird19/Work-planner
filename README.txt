@@ -1,25 +1,16 @@
-FINAL CLEAN WORK PLANNER FILES
+WORK PLANNER SERVICES + INVOICE V2
 
-Upload these files to your GitHub repository:
-1. index.html
-2. manifest.json
-3. service-worker.js
-4. icon-192.png
-5. icon-512.png
+Upload all files to the ROOT of your GitHub repo.
+At minimum replace index.html.
 
-Then turn on GitHub Pages:
-Settings > Pages > Deploy from branch > main > /root > Save
-
-Your app link will be:
-https://YOURUSERNAME.github.io/REPOSITORY-NAME/
-
-Open that link in Chrome on Android.
-Tap ⋮ > Add to Home screen or Install app.
-
-This version starts blank:
-0 hours worked
-$0 paid
-$0 owed
-
-Your data saves on the phone/browser.
-Use Export CSV inside the app to back up your data.
+Adds:
+- Invoices tab
+- Editable services/duties checklist
+- Add new services
+- Size/rate/price auto calculation
+- Invoice preview
+- Client signature pad
+- Save invoices under each client
+- Paid/unpaid colors
+- All invoices list
+- Export invoices CSV
