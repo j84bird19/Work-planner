@@ -17,6 +17,17 @@
 .clientInvoiceMiniCard.paid{background:#dcfce7;border:1px solid #16a34a}
 .clientInvoiceMiniCard.unpaid{background:#fee2e2;border:1px solid #dc2626}
 
+.twoFieldService{grid-template-columns:1fr 1fr!important}
+@media(max-width:900px){.twoFieldService{grid-template-columns:1fr!important}}
+
+.simpleChecklist{display:grid;gap:6px;margin:6px 0}
+.invoiceItemRow{display:grid;grid-template-columns:24px 1.2fr 1fr 95px;gap:5px;align-items:center;background:#1d1d1d;border:1px solid #333;border-radius:9px;padding:6px}
+.invoiceItemRow input[type="checkbox"]{width:18px;height:18px}
+.invoiceItemRow label{margin:0;color:#ddd;font-size:13px;text-transform:none;letter-spacing:0}
+.invoiceItemRow input{font-size:13px;padding:6px}
+.invoiceSectionTotal{text-align:right;color:#00d084;font-size:12px;margin:2px 0 8px}
+@media(max-width:900px){.invoiceItemRow{grid-template-columns:24px 1fr}.invoiceItemRow input.moneyField,.invoiceItemRow input.usedField{grid-column:2}}
+
 </style>
 
 <style id="serviceInvoiceStyles">
@@ -101,15 +112,26 @@
       <label>Invoice / Job Date</label>
       <input id="invoiceDate" type="date" onchange="renderInvoicePreview()">
 
-      <h4>Duties / Services</h4>
-      <div id="serviceChecklist" class="serviceChecklist"></div>
-
+      <h4>SERVICES</h4>
+      <div id="serviceChecklist" class="simpleChecklist"></div>
       <div class="serviceAddBox">
         <input id="newServiceName" placeholder="Add service">
         <button onclick="addService()">Add Service</button>
       </div>
 
-      <div id="serviceLines"></div>
+      <h4>SUPPLIES</h4>
+      <div id="supplyChecklist" class="simpleChecklist"></div>
+      <div class="serviceAddBox">
+        <input id="newSupplyName" placeholder="Add supply, ex: trash bags">
+        <button onclick="addSupply()">Add Supply</button>
+      </div>
+
+      <h4>LABOR</h4>
+      <div id="laborChecklist" class="simpleChecklist"></div>
+      <div class="serviceAddBox">
+        <input id="newLaborName" placeholder="Add labor field, ex: drive time">
+        <button onclick="addLabor()">Add Labor Field</button>
+      </div>
 
       <div class="invoiceTotalsBox">
         <div><span>Subtotal</span><b id="invoiceSubtotal">$0.00</b></div>
@@ -448,63 +470,132 @@ document.addEventListener('change',function(e){
 
 
 
+
+
+
 <script id="serviceInvoiceScript">
-let services = JSON.parse(localStorage.getItem('work_planner_services_v3') || 'null') || ['Weed eating','Mowing','Trimming','Leaf blowing','Gutters','Debris removal','Landscaping','Painting','Repair','Organizing','Moving','Hauling'];
-let invoices = JSON.parse(localStorage.getItem('work_planner_invoices_v3') || '[]');
-let activeLines = [];
+let services = JSON.parse(localStorage.getItem('work_planner_services_v5') || 'null') || ['Weed eating','Mowing','Trimming','Leaf blowing','Gutters','Debris removal','Landscaping','Painting','Repair','Organizing','Moving','Hauling'];
+let supplies = JSON.parse(localStorage.getItem('work_planner_supplies_v5') || 'null') || ['Gas','String','Oil'];
+let laborFields = JSON.parse(localStorage.getItem('work_planner_labor_v5') || 'null') || ['Lot size','Time'];
+let invoices = JSON.parse(localStorage.getItem('work_planner_invoices_v5') || '[]');
+let activeServices = [], activeSupplies = [], activeLabor = [];
 let sigCanvas, sigCtx, sigDrawing=false;
 
-function saveInvoiceState(){localStorage.setItem('work_planner_services_v3',JSON.stringify(services));localStorage.setItem('work_planner_invoices_v3',JSON.stringify(invoices));}
+function saveInvoiceState(){
+ localStorage.setItem('work_planner_services_v5',JSON.stringify(services));
+ localStorage.setItem('work_planner_supplies_v5',JSON.stringify(supplies));
+ localStorage.setItem('work_planner_labor_v5',JSON.stringify(laborFields));
+ localStorage.setItem('work_planner_invoices_v5',JSON.stringify(invoices));
+}
 function showMainTab(tab){
-  const main=document.querySelector('.main'), chart=document.querySelector('.chartPanel'), stats=document.querySelector('.stats'), inv=document.getElementById('invoiceTab');
-  if(main)main.style.display=tab==='planner'?'grid':'none';
-  if(chart)chart.style.display=tab==='planner'?'grid':'none';
-  if(stats)stats.style.display=tab==='planner'?'grid':'none';
-  if(inv)inv.style.display=tab==='invoices'?'block':'none';
-  const p=document.getElementById('plannerTabBtn'), i=document.getElementById('invoiceTabBtn');
-  if(p)p.className=tab==='planner'?'active':'';
-  if(i)i.className=tab==='invoices'?'active':'';
-  if(tab==='invoices'){renderServices();renderAllInvoices();setupSignature();if(!document.getElementById('invoiceDate').value)newInvoice();}
+ const main=document.querySelector('.main'), chart=document.querySelector('.chartPanel'), stats=document.querySelector('.stats'), inv=document.getElementById('invoiceTab');
+ if(main)main.style.display=tab==='planner'?'grid':'none';
+ if(chart)chart.style.display=tab==='planner'?'grid':'none';
+ if(stats)stats.style.display=tab==='planner'?'grid':'none';
+ if(inv)inv.style.display=tab==='invoices'?'block':'none';
+ const p=document.getElementById('plannerTabBtn'), i=document.getElementById('invoiceTabBtn');
+ if(p)p.className=tab==='planner'?'active':'';
+ if(i)i.className=tab==='invoices'?'active':'';
+ if(tab==='invoices'){renderInvoiceBuilder();renderAllInvoices();setupSignature();if(!document.getElementById('invoiceDate').value)newInvoice();}
 }
 function openInvoiceForCurrentClient(){
-  showMainTab('invoices');
-  newInvoice();
-  document.getElementById('invoiceClient').value=document.getElementById('client')?.value||'';
-  document.getElementById('invoiceAddress').value=document.getElementById('address')?.value||'';
-  document.getElementById('invoicePhone').value=document.getElementById('phone')?.value||'';
-  renderInvoicePreview();
+ showMainTab('invoices'); newInvoice();
+ document.getElementById('invoiceClient').value=document.getElementById('client')?.value||'';
+ document.getElementById('invoiceAddress').value=document.getElementById('address')?.value||'';
+ document.getElementById('invoicePhone').value=document.getElementById('phone')?.value||'';
+ renderInvoicePreview();
 }
-function renderClientInvoiceMini(){
-  const box=document.getElementById('clientInvoiceMiniList'); if(!box)return;
-  const name=(document.getElementById('client')?.value||'').trim();
-  const arr=invoices.filter(i=>i.client===name);
-  box.innerHTML=arr.length?arr.slice(-4).reverse().map(inv=>`<div class="clientInvoiceMiniCard ${inv.status==='paid'?'paid':'unpaid'}" onclick="showMainTab('invoices');loadInvoice('${inv.id}')">${esc(inv.date)} — ${money(inv.subtotal)} — ${inv.status}</div>`).join(''):'<div class="small">No invoices for this client yet.</div>';
-}
+function addService(){const n=(document.getElementById('newServiceName').value||'').trim();if(!n)return;if(!services.includes(n))services.push(n);document.getElementById('newServiceName').value='';saveInvoiceState();renderInvoiceBuilder();}
+function addSupply(){const n=(document.getElementById('newSupplyName').value||'').trim();if(!n)return;if(!supplies.includes(n))supplies.push(n);document.getElementById('newSupplyName').value='';saveInvoiceState();renderInvoiceBuilder();}
+function addLabor(){const n=(document.getElementById('newLaborName').value||'').trim();if(!n)return;if(!laborFields.includes(n))laborFields.push(n);document.getElementById('newLaborName').value='';saveInvoiceState();renderInvoiceBuilder();}
+function findOrCreate(arr,name,obj){let item=arr.find(x=>x.name===name);if(!item){item={name,...obj};arr.push(item)}return item}
+function removeFrom(arr,name){const i=arr.findIndex(x=>x.name===name);if(i>=0)arr.splice(i,1)}
+function renderInvoiceBuilder(){renderServices();renderSupplies();renderLabor();calcInvoiceTotal();}
 function renderServices(){
-  const box=document.getElementById('serviceChecklist'); if(!box)return;
-  box.innerHTML=services.map(s=>`<label class="serviceCheck"><input type="checkbox" onchange="toggleServiceLine('${String(s).replaceAll("'","&#39;")}',this.checked)" ${activeLines.some(l=>l.name===s)?'checked':''}> ${esc(s)}</label>`).join('');
+ const box=document.getElementById('serviceChecklist'); if(!box)return;
+ box.innerHTML=services.map(name=>{
+   const item=activeServices.find(x=>x.name===name)||{};
+   const checked=activeServices.some(x=>x.name===name);
+   return `<div class="invoiceItemRow">
+    <input type="checkbox" ${checked?'checked':''} onchange="this.checked?findOrCreate(activeServices,'${safeAttr(name)}',{price:''}):removeFrom(activeServices,'${safeAttr(name)}');renderInvoiceBuilder()">
+    <label>${esc(name)}</label>
+    <input class="usedField" placeholder="details/lot size" value="${esc(item.detail||'')}" oninput="findOrCreate(activeServices,'${safeAttr(name)}',{price:''}).detail=this.value;renderInvoicePreview()">
+    <input class="moneyField" type="number" step="0.01" placeholder="$ charged" value="${esc(item.price||'')}" oninput="findOrCreate(activeServices,'${safeAttr(name)}',{price:''}).price=this.value;calcInvoiceTotal()">
+   </div>`;
+ }).join('') + `<div class="invoiceSectionTotal">Services total: ${money(activeServices.reduce((s,x)=>s+Number(x.price||0),0))}</div>`;
 }
-function addService(){const n=(document.getElementById('newServiceName').value||'').trim();if(!n)return;if(!services.includes(n))services.push(n);document.getElementById('newServiceName').value='';saveInvoiceState();renderServices();}
-function toggleServiceLine(name,on){if(on){if(!activeLines.some(l=>l.name===name))activeLines.push({name,measureType:'sq ft',size:'',rate:'',price:'',notes:''});}else activeLines=activeLines.filter(l=>l.name!==name);renderServiceLines();calcInvoiceTotal();}
-function renderServiceLines(){
- const box=document.getElementById('serviceLines'); if(!box)return;
- box.innerHTML=activeLines.map((l,idx)=>`<div class="serviceLine"><b style="color:#00d084">${esc(l.name)}</b> <button class="danger" onclick="removeServiceLine(${idx})">Remove</button><div class="serviceGrid"><div><label>Size / Area / Distance</label><input type="number" step="0.01" value="${esc(l.size)}" oninput="activeLines[${idx}].size=this.value;calcLine(${idx})"></div><div><label>Type</label><select onchange="activeLines[${idx}].measureType=this.value;renderInvoicePreview()"><option ${l.measureType==='sq ft'?'selected':''}>sq ft</option><option ${l.measureType==='room'?'selected':''}>room</option><option ${l.measureType==='linear ft'?'selected':''}>linear ft</option><option ${l.measureType==='mile'?'selected':''}>mile</option><option ${l.measureType==='flat'?'selected':''}>flat</option></select></div><div><label>Rate</label><input type="number" step="0.01" value="${esc(l.rate)}" oninput="activeLines[${idx}].rate=this.value;calcLine(${idx})"></div><div><label>Price</label><input type="number" step="0.01" value="${esc(l.price)}" oninput="activeLines[${idx}].price=this.value;calcInvoiceTotal()"></div></div><label>Service Notes</label><input value="${esc(l.notes)}" oninput="activeLines[${idx}].notes=this.value;renderInvoicePreview()"></div>`).join('');
+function renderSupplies(){
+ const box=document.getElementById('supplyChecklist'); if(!box)return;
+ box.innerHTML=supplies.map(name=>{
+   const item=activeSupplies.find(x=>x.name===name)||{};
+   const checked=activeSupplies.some(x=>x.name===name);
+   return `<div class="invoiceItemRow">
+    <input type="checkbox" ${checked?'checked':''} onchange="this.checked?findOrCreate(activeSupplies,'${safeAttr(name)}',{used:'',cost:''}):removeFrom(activeSupplies,'${safeAttr(name)}');renderInvoiceBuilder()">
+    <label>${esc(name)}</label>
+    <input class="usedField" placeholder="used" value="${esc(item.used||'')}" oninput="findOrCreate(activeSupplies,'${safeAttr(name)}',{used:'',cost:''}).used=this.value;renderInvoicePreview()">
+    <input class="moneyField" type="number" step="0.01" placeholder="$ cost" value="${esc(item.cost||'')}" oninput="findOrCreate(activeSupplies,'${safeAttr(name)}',{used:'',cost:''}).cost=this.value;calcInvoiceTotal()">
+   </div>`;
+ }).join('') + `<div class="invoiceSectionTotal">Supplies total: ${money(activeSupplies.reduce((s,x)=>s+Number(x.cost||0),0))}</div>`;
 }
-function removeServiceLine(idx){activeLines.splice(idx,1);renderServices();renderServiceLines();calcInvoiceTotal();}
-function calcLine(idx){const l=activeLines[idx];l.price=(Number(l.size||0)*Number(l.rate||0)).toFixed(2);renderServiceLines();calcInvoiceTotal();}
-function calcInvoiceTotal(){const subtotal=activeLines.reduce((s,l)=>s+Number(l.price||0),0), paid=Number(document.getElementById('invoiceAmountPaid')?.value||0), bal=Math.max(subtotal-paid,0);document.getElementById('invoiceSubtotal').textContent=money(subtotal);document.getElementById('invoicePaidDisplay').textContent=money(paid);document.getElementById('invoiceBalance').textContent=money(bal);const st=document.getElementById('invoiceStatus');if(st&&paid>=subtotal&&subtotal>0)st.value='paid';renderInvoicePreview();}
-function newInvoice(){document.getElementById('invoiceId').value='';document.getElementById('invoiceClient').value='';document.getElementById('invoiceAddress').value='';document.getElementById('invoicePhone').value='';document.getElementById('invoiceDate').value=iso(new Date());document.getElementById('invoiceStatus').value='unpaid';document.getElementById('invoiceHowPaid').value='';document.getElementById('invoiceAmountPaid').value='';document.getElementById('invoiceNotes').value='';activeLines=[];renderServices();renderServiceLines();clearSignature(false);calcInvoiceTotal();}
-function invoiceObject(){const subtotal=activeLines.reduce((s,l)=>s+Number(l.price||0),0), paid=Number(document.getElementById('invoiceAmountPaid').value||0);return{id:document.getElementById('invoiceId').value||uid(),client:document.getElementById('invoiceClient').value.trim(),address:document.getElementById('invoiceAddress').value,phone:document.getElementById('invoicePhone').value,date:document.getElementById('invoiceDate').value||iso(new Date()),lines:JSON.parse(JSON.stringify(activeLines)),subtotal,status:document.getElementById('invoiceStatus').value,howPaid:document.getElementById('invoiceHowPaid').value,amountPaid:paid,balance:Math.max(subtotal-paid,0),notes:document.getElementById('invoiceNotes').value,signature:sigCanvas?sigCanvas.toDataURL('image/png'):''};}
+function renderLabor(){
+ const box=document.getElementById('laborChecklist'); if(!box)return;
+ box.innerHTML=laborFields.map(name=>{
+   const item=activeLabor.find(x=>x.name===name)||{};
+   const checked=activeLabor.some(x=>x.name===name);
+   return `<div class="invoiceItemRow">
+    <input type="checkbox" ${checked?'checked':''} onchange="this.checked?findOrCreate(activeLabor,'${safeAttr(name)}',{value:'',price:''}):removeFrom(activeLabor,'${safeAttr(name)}');renderInvoiceBuilder()">
+    <label>${esc(name)}</label>
+    <input class="usedField" placeholder="value" value="${esc(item.value||'')}" oninput="findOrCreate(activeLabor,'${safeAttr(name)}',{value:'',price:''}).value=this.value;renderInvoicePreview()">
+    <input class="moneyField" type="number" step="0.01" placeholder="$ labor" value="${esc(item.price||'')}" oninput="findOrCreate(activeLabor,'${safeAttr(name)}',{value:'',price:''}).price=this.value;calcInvoiceTotal()">
+   </div>`;
+ }).join('') + `<div class="invoiceSectionTotal">Labor total: ${money(activeLabor.reduce((s,x)=>s+Number(x.price||0),0))}</div>`;
+}
+function safeAttr(s){return String(s).replaceAll("\\","\\\\").replaceAll("'","\\'")}
+function calcInvoiceTotal(){
+ const serviceTotal=activeServices.reduce((s,x)=>s+Number(x.price||0),0);
+ const supplyTotal=activeSupplies.reduce((s,x)=>s+Number(x.cost||0),0);
+ const laborTotal=activeLabor.reduce((s,x)=>s+Number(x.price||0),0);
+ const subtotal=serviceTotal+supplyTotal+laborTotal;
+ const paid=Number(document.getElementById('invoiceAmountPaid')?.value||0), bal=Math.max(subtotal-paid,0);
+ document.getElementById('invoiceSubtotal').textContent=money(subtotal);
+ document.getElementById('invoicePaidDisplay').textContent=money(paid);
+ document.getElementById('invoiceBalance').textContent=money(bal);
+ const st=document.getElementById('invoiceStatus'); if(st&&paid>=subtotal&&subtotal>0)st.value='paid';
+ renderInvoicePreview();
+}
+function newInvoice(){
+ document.getElementById('invoiceId').value='';document.getElementById('invoiceClient').value='';document.getElementById('invoiceAddress').value='';document.getElementById('invoicePhone').value='';
+ document.getElementById('invoiceDate').value=iso(new Date());document.getElementById('invoiceStatus').value='unpaid';document.getElementById('invoiceHowPaid').value='';document.getElementById('invoiceAmountPaid').value='';document.getElementById('invoiceNotes').value='';
+ activeServices=[];activeSupplies=[];activeLabor=[];renderInvoiceBuilder();clearSignature(false);calcInvoiceTotal();
+}
+function invoiceObject(){
+ const serviceTotal=activeServices.reduce((s,x)=>s+Number(x.price||0),0);
+ const supplyTotal=activeSupplies.reduce((s,x)=>s+Number(x.cost||0),0);
+ const laborTotal=activeLabor.reduce((s,x)=>s+Number(x.price||0),0);
+ const subtotal=serviceTotal+supplyTotal+laborTotal, paid=Number(document.getElementById('invoiceAmountPaid').value||0);
+ return {id:document.getElementById('invoiceId').value||uid(),client:document.getElementById('invoiceClient').value.trim(),address:document.getElementById('invoiceAddress').value,phone:document.getElementById('invoicePhone').value,date:document.getElementById('invoiceDate').value||iso(new Date()),services:JSON.parse(JSON.stringify(activeServices)),supplies:JSON.parse(JSON.stringify(activeSupplies)),labor:JSON.parse(JSON.stringify(activeLabor)),subtotal,status:document.getElementById('invoiceStatus').value,howPaid:document.getElementById('invoiceHowPaid').value,amountPaid:paid,balance:Math.max(subtotal-paid,0),notes:document.getElementById('invoiceNotes').value,signature:sigCanvas?sigCanvas.toDataURL('image/png'):''};
+}
 function saveInvoice(){const inv=invoiceObject();const idx=invoices.findIndex(i=>i.id===inv.id);if(idx>=0)invoices[idx]=inv;else invoices.push(inv);document.getElementById('invoiceId').value=inv.id;saveInvoiceState();renderAllInvoices();renderClientInvoiceMini();renderInvoicePreview();alert('Invoice saved');}
 function deleteInvoice(){const id=document.getElementById('invoiceId').value;if(!id)return;invoices=invoices.filter(i=>i.id!==id);saveInvoiceState();newInvoice();renderAllInvoices();renderClientInvoiceMini();}
-function loadInvoice(id){const inv=invoices.find(i=>i.id===id);if(!inv)return;document.getElementById('invoiceId').value=inv.id;document.getElementById('invoiceClient').value=inv.client||'';document.getElementById('invoiceAddress').value=inv.address||'';document.getElementById('invoicePhone').value=inv.phone||'';document.getElementById('invoiceDate').value=inv.date||iso(new Date());document.getElementById('invoiceStatus').value=inv.status||'unpaid';document.getElementById('invoiceHowPaid').value=inv.howPaid||'';document.getElementById('invoiceAmountPaid').value=inv.amountPaid||'';document.getElementById('invoiceNotes').value=inv.notes||'';activeLines=JSON.parse(JSON.stringify(inv.lines||[]));renderServices();renderServiceLines();setupSignature();clearSignature(false);if(inv.signature){const img=new Image();img.onload=()=>sigCtx.drawImage(img,0,0,sigCanvas.width,sigCanvas.height);img.src=inv.signature;}calcInvoiceTotal();}
-function renderInvoicePreview(){const box=document.getElementById('invoicePreviewBox');if(!box)return;const inv=invoiceObject();box.innerHTML=`<h2>Work Invoice / Receipt</h2><p><b>Date:</b> ${esc(inv.date)}<br><b>Client:</b> ${esc(inv.client||'')}${inv.phone?`<br><b>Phone:</b> ${esc(inv.phone)}`:''}${inv.address?`<br><b>Address:</b> ${esc(inv.address)}`:''}</p><div class="invoiceLine head"><div>Service</div><div>Size</div><div>Rate</div><div>Price</div></div>${inv.lines.map(l=>`<div class="invoiceLine"><div>${esc(l.name)}<br><small>${esc(l.measureType||'')} ${esc(l.notes||'')}</small></div><div>${esc(l.size||'')}</div><div>${money(l.rate||0)}</div><div>${money(l.price||0)}</div></div>`).join('')}<h3>Total: ${money(inv.subtotal)}</h3><p><b>Paid:</b> ${money(inv.amountPaid)} ${inv.howPaid?`by ${esc(inv.howPaid)}`:''}<br><b>Still Owed:</b> ${money(inv.balance)}</p><p><b>Status:</b> ${esc(inv.status)}</p>${inv.notes?`<p><b>Notes:</b> ${esc(inv.notes)}</p>`:''}<p><b>Client signature:</b></p>${sigCanvas?`<img src="${sigCanvas.toDataURL('image/png')}" style="max-width:100%;border:1px solid #ccc">`:''}`;}
+function loadInvoice(id){
+ const inv=invoices.find(i=>i.id===id); if(!inv)return;
+ document.getElementById('invoiceId').value=inv.id;document.getElementById('invoiceClient').value=inv.client||'';document.getElementById('invoiceAddress').value=inv.address||'';document.getElementById('invoicePhone').value=inv.phone||'';document.getElementById('invoiceDate').value=inv.date||iso(new Date());document.getElementById('invoiceStatus').value=inv.status||'unpaid';document.getElementById('invoiceHowPaid').value=inv.howPaid||'';document.getElementById('invoiceAmountPaid').value=inv.amountPaid||'';document.getElementById('invoiceNotes').value=inv.notes||'';
+ activeServices=JSON.parse(JSON.stringify(inv.services||inv.lines||[])); activeSupplies=JSON.parse(JSON.stringify(inv.supplies||[])); activeLabor=JSON.parse(JSON.stringify(inv.labor||[]));
+ renderInvoiceBuilder();setupSignature();clearSignature(false);if(inv.signature){const img=new Image();img.onload=()=>sigCtx.drawImage(img,0,0,sigCanvas.width,sigCanvas.height);img.src=inv.signature;}calcInvoiceTotal();
+}
+function renderInvoicePreview(){
+ const box=document.getElementById('invoicePreviewBox'); if(!box)return; const inv=invoiceObject();
+ const serviceRows=inv.services.map(x=>`<div class="invoiceLine"><div>${esc(x.name)}<br><small>${esc(x.detail||'')}</small></div><div></div><div></div><div>${money(x.price||0)}</div></div>`).join('');
+ const supplyRows=inv.supplies.map(x=>`<div class="invoiceLine"><div>${esc(x.name)}<br><small>Used: ${esc(x.used||'')}</small></div><div></div><div></div><div>${money(x.cost||0)}</div></div>`).join('');
+ const laborRows=inv.labor.map(x=>`<div class="invoiceLine"><div>${esc(x.name)}<br><small>${esc(x.value||'')}</small></div><div></div><div></div><div>${money(x.price||0)}</div></div>`).join('');
+ box.innerHTML=`<h2>Work Invoice / Receipt</h2><p><b>Date:</b> ${esc(inv.date)}<br><b>Client:</b> ${esc(inv.client||'')}${inv.phone?`<br><b>Phone:</b> ${esc(inv.phone)}`:''}${inv.address?`<br><b>Address:</b> ${esc(inv.address)}`:''}</p><div class="invoiceLine head"><div>Item</div><div></div><div></div><div>Price</div></div>${serviceRows?'<h3>Services</h3>'+serviceRows:''}${supplyRows?'<h3>Supplies</h3>'+supplyRows:''}${laborRows?'<h3>Labor</h3>'+laborRows:''}<h3>Total: ${money(inv.subtotal)}</h3><p><b>Paid:</b> ${money(inv.amountPaid)} ${inv.howPaid?`by ${esc(inv.howPaid)}`:''}<br><b>Still Owed:</b> ${money(inv.balance)}</p><p><b>Status:</b> ${esc(inv.status)}</p>${inv.notes?`<p><b>Notes:</b> ${esc(inv.notes)}</p>`:''}<p><b>Client signature:</b></p>${sigCanvas?`<img src="${sigCanvas.toDataURL('image/png')}" style="max-width:100%;border:1px solid #ccc">`:''}`;
+}
 function renderAllInvoices(){const box=document.getElementById('allInvoicesList');if(!box)return;const groups={};invoices.forEach(inv=>{const n=inv.client||'Unnamed Client';if(!groups[n])groups[n]=[];groups[n].push(inv);});box.innerHTML=Object.keys(groups).sort().map(name=>{const arr=groups[name],paid=arr.reduce((s,i)=>s+Number(i.amountPaid||0),0),owed=arr.reduce((s,i)=>s+Number(i.balance||0),0);return`<div class="clientInvoiceGroup"><h4>${esc(name)}</h4><p class="small">Invoices: ${arr.length} • Paid ${money(paid)} • Owed ${money(owed)}</p>${arr.map(inv=>`<div class="invoiceCard ${inv.status==='paid'?'paid':'unpaid'}" onclick="loadInvoice('${inv.id}')"><b>${esc(inv.date)}</b> — ${money(inv.subtotal)} — ${inv.status}</div>`).join('')}</div>`}).join('')||'<p class="small">No invoices yet.</p>';}
-function exportInvoicesCSV(){const h=['Invoice ID','Date','Client','Address','Phone','Status','Subtotal','Paid','Balance','How Paid','Services','Notes'];const csv=[h.join(',')].concat(invoices.map(inv=>[inv.id,inv.date,inv.client,inv.address,inv.phone,inv.status,inv.subtotal,inv.amountPaid,inv.balance,inv.howPaid,(inv.lines||[]).map(l=>`${l.name} ${l.size} ${l.measureType} @ ${l.rate} = ${l.price}`).join(' | '),inv.notes].map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(','))).join('\\n');const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='invoices.csv';a.click();URL.revokeObjectURL(url);}
+function renderClientInvoiceMini(){const box=document.getElementById('clientInvoiceMiniList');if(!box)return;const name=(document.getElementById('client')?.value||'').trim();const arr=invoices.filter(i=>i.client===name);box.innerHTML=arr.length?arr.slice(-4).reverse().map(inv=>`<div class="clientInvoiceMiniCard ${inv.status==='paid'?'paid':'unpaid'}" onclick="showMainTab('invoices');loadInvoice('${inv.id}')">${esc(inv.date)} — ${money(inv.subtotal)} — ${inv.status}</div>`).join(''):'<div class="small">No invoices for this client yet.</div>';}
+function exportInvoicesCSV(){const h=['Invoice ID','Date','Client','Status','Subtotal','Paid','Balance','Services','Supplies','Labor','Notes'];const csv=[h.join(',')].concat(invoices.map(inv=>[inv.id,inv.date,inv.client,inv.status,inv.subtotal,inv.amountPaid,inv.balance,(inv.services||[]).map(x=>`${x.name}: ${x.price}`).join(' | '),(inv.supplies||[]).map(x=>`${x.name}: used ${x.used}, cost ${x.cost}`).join(' | '),(inv.labor||[]).map(x=>`${x.name}: ${x.value}, price ${x.price}`).join(' | '),inv.notes].map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(','))).join('\n');const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='invoices.csv';a.click();URL.revokeObjectURL(url);}
 function setupSignature(){sigCanvas=document.getElementById('signaturePad');if(!sigCanvas)return;const rect=sigCanvas.getBoundingClientRect();sigCanvas.width=Math.max(300,Math.floor(rect.width*2));sigCanvas.height=260;sigCtx=sigCanvas.getContext('2d');sigCtx.lineWidth=4;sigCtx.lineCap='round';sigCtx.strokeStyle='#111';sigCanvas.onpointerdown=e=>{sigDrawing=true;const p=sigPoint(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y)};sigCanvas.onpointermove=e=>{if(!sigDrawing)return;const p=sigPoint(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke()};sigCanvas.onpointerup=()=>{sigDrawing=false;renderInvoicePreview()};sigCanvas.onpointerleave=()=>sigDrawing=false;}
 function sigPoint(e){const r=sigCanvas.getBoundingClientRect();return{x:(e.clientX-r.left)*(sigCanvas.width/r.width),y:(e.clientY-r.top)*(sigCanvas.height/r.height)}}
 function clearSignature(update=true){if(!sigCanvas)setupSignature();if(sigCtx){sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);if(update)renderInvoicePreview();}}
-document.addEventListener('input',e=>{if(['client','address','phone'].includes(e.target.id))renderClientInvoiceMini()});
 </script>
 
 </body>
