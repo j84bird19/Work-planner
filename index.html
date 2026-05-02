@@ -1,485 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Work Planner Dashboard Fixed</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bird Work Planner</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#050505">
 <style>
-:root{--bg:#050505;--panel:#101010;--cell:#060606;--line:#252525;--text:#f4f4f4;--muted:#9b9b9b;--green:#00d084;--blue:#00a6ff;--purple:#8b5cf6;--red:#ef4444;--paper:#fbf0d8;--ink:#332719}
-*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;overflow:hidden}.app{height:100vh;max-width:1400px;margin:auto;padding:8px;display:grid;grid-template-rows:auto auto 1fr 190px;gap:8px}.top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:42px}h1{font-size:30px;font-weight:400;margin:0}.buttons,.views{display:flex;gap:7px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:9px 11px;background:#2b2b2b;color:#fff;font-weight:bold;font-size:14px}.active{background:var(--green);color:#001b10}.blue{background:var(--blue)}.danger{background:var(--red)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:8px}.stat{background:#111;border:1px solid var(--line);border-radius:11px;padding:6px 8px}.stat .label{font-size:10px;color:var(--muted)}.stat .val{font-size:17px;color:var(--green);font-weight:bold}.main{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:8px}.calendar{min-height:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#111}.days,.month{display:grid;grid-template-columns:repeat(7,1fr)}.dayname{padding:7px;color:var(--muted);border-bottom:1px solid var(--line);font-weight:bold;font-size:12px}.month{height:calc(100% - 31px)}.day{min-height:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#050505;padding:4px;overflow:hidden;cursor:pointer}.day:nth-child(7n){border-right:0}.num{font-size:11px;color:var(--muted)}.outside{opacity:.45}.selected{background:#2c2c2c}.today{outline:2px solid var(--blue);outline-offset:-2px}.event{font-size:11px;border-radius:4px;padding:2px 4px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--blue)}.event.done{background:var(--green);color:#001b10}.event.unpaid{background:var(--purple)}.week,.daily{height:100%;display:grid;gap:7px;padding:8px}.week{grid-template-columns:repeat(7,1fr)}.weekbox,.daybox{background:#080808;border:1px solid var(--line);border-radius:12px;padding:9px;overflow:auto}.weekbox b{color:var(--green)}.side{min-height:0;background:var(--paper);color:var(--ink);border:2px solid #d4bc91;border-radius:22px;padding:10px;display:grid;grid-template-rows:auto auto 88px 1fr auto;gap:6px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}.side h2{text-align:center;font-size:32px;letter-spacing:4px;font-family:Georgia,serif;font-weight:400;margin:0;color:#7d5c36}.sideDate{text-align:center;font-weight:bold;font-size:12px;color:#7a5b37}.sideList{border-top:1px solid #d5be92;border-bottom:1px solid #d5be92;overflow:auto;padding:4px}.sideItem{padding:5px 2px;border-bottom:1px solid #dccaa3;cursor:pointer}.sideItem strong{display:block;font-size:13px}.sideItem span{font-size:11px;color:#705536}.formScroll{min-height:0;overflow:auto;padding-right:3px}label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#777;margin:5px 0 2px}input,select,textarea{width:100%;border:1px solid #444;background:#1f1f1f;color:#fff;border-radius:7px;padding:6px;font-size:13px}textarea{min-height:42px;resize:vertical}.side input,.side select,.side textarea{background:#fffaf0;color:#2e2117;border-color:#c7ad7e}.r2{display:grid;grid-template-columns:1fr 1fr;gap:5px}.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}.payProject{display:none}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:8px 10px}.chartPanel{min-height:0;background:#050505;border:1px solid var(--line);border-radius:12px;padding:5px;overflow:auto;display:grid;grid-template-rows:auto auto 1fr;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}.chartTitle{display:flex;justify-content:space-between;align-items:center;gap:7px;flex-wrap:wrap}.chartTitle h2{margin:0;font-size:18px}.chartHead,.chartRow{display:grid;grid-template-columns:88px 78px 72px 72px 48px 62px 48px 78px 76px 150px 150px 1fr 115px 90px;gap:3px;min-width:1320px}.chartHead{color:#aaa;font-size:10px;text-transform:uppercase;padding:3px;overflow:hidden}.chartRows{overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;min-height:0}.chartRow{background:#262626;border-radius:5px;margin:3px 0;padding:3px;align-items:center}.chartRow input,.chartRow textarea,.chartRow select{font-size:12px;padding:5px;border-radius:5px}.chartRow textarea{min-height:28px}.small{font-size:11px;color:#999}.side .small{color:#72583a}
-.clientMatches{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.clientMatches button{font-size:11px;padding:5px 7px;background:#d8c296;color:#2e2117;border:1px solid #b99b62}.clientTotals{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px}.clientTotals div{background:#ead8b4;border:1px solid #c5a76f;border-radius:8px;padding:5px;text-align:center}.clientTotals span{display:block;font-size:9px;text-transform:uppercase;color:#775b36}.clientTotals b{font-size:12px;color:#2e2117}
-@media(max-width:900px){html,body{overflow:auto}.app{height:auto;min-height:100vh;grid-template-rows:auto auto auto auto}.main{grid-template-columns:1fr}.calendar{height:520px}.side{height:720px}.stats{grid-template-columns:repeat(3,1fr)}.week{grid-template-columns:1fr}.chartPanel{height:300px;overflow:auto}h1{font-size:26px}}
-
-.clientInvoiceMini{margin-top:8px;background:#ead8b4;border:1px solid #c5a76f;border-radius:10px;padding:7px}
-.clientInvoiceMini h4{margin:0 0 6px;color:#2e2117}
-.clientInvoiceMiniList{margin-top:6px;display:grid;gap:4px}
-.clientInvoiceMiniCard{border-radius:8px;padding:6px;color:#111;font-size:12px;cursor:pointer}
-.clientInvoiceMiniCard.paid{background:#dcfce7;border:1px solid #16a34a}
-.clientInvoiceMiniCard.unpaid{background:#fee2e2;border:1px solid #dc2626}
-
-.twoFieldService{grid-template-columns:1fr 1fr!important}
-@media(max-width:900px){.twoFieldService{grid-template-columns:1fr!important}}
-
-.simpleChecklist{display:grid;gap:6px;margin:6px 0}
-.invoiceItemRow{display:grid;grid-template-columns:24px 1.2fr 1fr 95px;gap:5px;align-items:center;background:#1d1d1d;border:1px solid #333;border-radius:9px;padding:6px}
-.invoiceItemRow input[type="checkbox"]{width:18px;height:18px}
-.invoiceItemRow label{margin:0;color:#ddd;font-size:13px;text-transform:none;letter-spacing:0}
-.invoiceItemRow input{font-size:13px;padding:6px}
-.invoiceSectionTotal{text-align:right;color:#00d084;font-size:12px;margin:2px 0 8px}
-@media(max-width:900px){.invoiceItemRow{grid-template-columns:24px 1fr}.invoiceItemRow input.moneyField,.invoiceItemRow input.usedField{grid-column:2}}
-
-
-.servicePricingGrid{display:grid;grid-template-columns:1fr 110px 85px 85px 95px;gap:5px;margin-top:6px}
-.servicePricingGrid label{margin:0;color:#ddd;font-size:11px;text-transform:uppercase}
-.servicePricingGrid input,.servicePricingGrid select{font-size:13px;padding:6px}
-@media(max-width:900px){.servicePricingGrid{grid-template-columns:1fr 1fr}.servicePricingGrid .fullMobile{grid-column:1/-1}}
-
+body{margin:0;background:#050505;color:#fff;font-family:Arial,sans-serif;padding:10px}button{background:#222;color:#fff;border:0;border-radius:10px;padding:10px;font-weight:bold}button.on,.green{background:#00d084;color:#001b10}.blue{background:#0099ff}.red{background:#ef4444}input,select,textarea{width:100%;box-sizing:border-box;padding:8px;border-radius:8px;border:1px solid #444;background:#222;color:#fff}textarea{min-height:55px}label{display:block;color:#aaa;font-size:11px;text-transform:uppercase;margin-top:8px}.card{background:#111;border:1px solid #333;border-radius:14px;padding:10px;margin:8px 0}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tabs{display:flex;gap:6px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#111;border:1px solid #333;border-radius:12px;padding:8px}.stat b{color:#00d084;font-size:20px}.grid{display:grid;grid-template-columns:1fr 350px;gap:8px}.days,.month{display:grid;grid-template-columns:repeat(7,1fr)}.dn{font-size:11px;color:#aaa;padding:5px}.day{min-height:72px;background:#080808;border:1px solid #222;padding:4px;overflow:hidden}.sel{background:#2a2a2a}.today{outline:2px solid #0099ff}.ev{font-size:11px;background:#8b5cf6;border-radius:4px;margin:2px 0;padding:2px}.done{background:#00d084;color:#001b10}.paper{background:#fff;color:#111;border-radius:12px;padding:14px}.paper h2,.paper h3{color:#111}.line{display:grid;grid-template-columns:1fr 90px;border-bottom:1px solid #ddd;padding:5px 0}.item{background:#1b1b1b;border:1px solid #333;border-radius:10px;padding:8px;margin:6px 0}.itemHead{display:grid;grid-template-columns:25px 1fr;gap:6px}.priceGrid{display:grid;grid-template-columns:1fr 100px 80px 80px 90px;gap:5px;margin-top:6px}.supplyGrid,.laborGrid{display:grid;grid-template-columns:25px 1fr 1fr 90px;gap:5px;align-items:center;background:#1b1b1b;border:1px solid #333;border-radius:10px;padding:8px;margin:6px 0}.mini{color:#00d084;text-align:right;font-size:12px}.sig{width:100%;height:130px;background:#fff;border-radius:10px;touch-action:none}.invoiceCard{padding:8px;border-radius:8px;margin:5px 0;color:#111}.paid{background:#dcfce7}.unpaid{background:#fee2e2}.small{color:#aaa;font-size:12px}@media(max-width:900px){.grid{grid-template-columns:1fr}.priceGrid{grid-template-columns:1fr 1fr}.supplyGrid,.laborGrid{grid-template-columns:25px 1fr}.supplyGrid input,.laborGrid input{grid-column:2}}
 </style>
-
-<style id="serviceInvoiceStyles">
-.invoicePage{min-height:0;background:#050505;border:1px solid var(--line);border-radius:14px;padding:8px;overflow:auto}
-.invoiceTop{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.invoiceTop h2{margin:0}
-.invoiceLayout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:8px}.invoiceBuilder,.invoicePreview,.allInvoices{background:#101010;border:1px solid var(--line);border-radius:14px;padding:10px;overflow:auto}.invoiceBuilder,.invoicePreview{max-height:calc(100vh - 190px)}
-.serviceChecklist{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:6px 0}.serviceCheck{background:#1d1d1d;border:1px solid #333;border-radius:8px;padding:6px;font-size:12px}.serviceCheck input{width:auto;margin-right:4px}
-.serviceAddBox{display:grid;grid-template-columns:1fr auto;gap:6px;margin:8px 0}.serviceLine{background:#1d1d1d;border:1px solid #333;border-radius:10px;padding:7px;margin:6px 0}.serviceLineTop{display:flex;justify-content:space-between;gap:6px;align-items:center}.serviceLineTop b{color:#00d084}.serviceGrid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-top:6px}
-.invoiceTotalsBox{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.invoiceTotalsBox div{background:#1d1d1d;border:1px solid #333;border-radius:10px;padding:7px;text-align:center}.invoiceTotalsBox span{display:block;color:#999;font-size:11px}.invoiceTotalsBox b{color:#00d084}
-.signaturePad{width:100%;height:130px;background:#fff;border:2px solid #777;border-radius:10px;touch-action:none}.invoicePaper{background:#fff;color:#111;border-radius:10px;padding:14px;min-height:400px}.invoicePaper h2,.invoicePaper h3{color:#111;margin:4px 0}.invoiceLine{display:grid;grid-template-columns:1fr 60px 60px 70px;gap:5px;border-bottom:1px solid #ddd;padding:5px 0;font-size:13px}.invoiceLine.head{font-weight:bold;background:#eee}.invoiceStatusCard{border-radius:10px;padding:8px;margin:6px 0;color:#111}.invoiceStatusCard.paid{background:#dcfce7;border:1px solid #16a34a}.invoiceStatusCard.unpaid{background:#fee2e2;border:1px solid #dc2626}.clientInvoiceGroup{border:1px solid #333;border-radius:12px;margin:8px 0;padding:8px;background:#111}.invoiceCard{padding:7px;border-radius:8px;margin:5px 0;cursor:pointer;color:#111}.invoiceCard.paid{background:#dcfce7}.invoiceCard.unpaid{background:#fee2e2}
-@media(max-width:900px){.invoiceLayout{grid-template-columns:1fr}.serviceChecklist{grid-template-columns:repeat(2,1fr)}.serviceGrid{grid-template-columns:1fr 1fr}.invoiceBuilder,.invoicePreview{max-height:none}.invoicePage{overflow:visible}}
-</style>
-
 </head>
 <body>
-<div class="app">
-<div class="top"><h1 id="title"></h1><div class="buttons"><button onclick="prev()">‹</button><button onclick="today()">Today</button><button onclick="next()">›</button><button class="blue" onclick="newJob()">+ Job</button></div></div>
-<div class="views"><span class="small" style="align-self:center;color:#00d084;font-weight:bold;">Offline HTML Widget</span><button id="mb" onclick="setView('month')">Monthly</button><button id="wb" onclick="setView('week')">Weekly</button><button id="db" onclick="setView('day')">Daily</button><button onclick="exportCSV()">Export CSV</button><button onclick="showMainTab('planner')" id="plannerTabBtn" class="active">Planner</button><button onclick="showMainTab('invoices')" id="invoiceTabBtn">Invoices</button></div>
-<div class="stats"><div class="stat"><div class="label">Total Hours Worked</div><div class="val" id="sWorked">0</div></div><div class="stat"><div class="label">Total Amount Paid</div><div class="val" id="sPaid">$0</div></div><div class="stat"><div class="label">Total Amount Owed</div><div class="val" id="sOwed">$0</div></div></div>
-<div class="main">
-<div id="cal" class="calendar"></div>
-<aside class="side"><h2>DAY</h2><div id="sideDate" class="sideDate"></div><div id="sideList" class="sideList"></div>
-<div class="formScroll">
-<input type="hidden" id="id"><label>Date</label><input id="date" type="date"><label>Scheduled Work / Description</label><input id="desc" placeholder="Ex: Dig fence holes">
-<div class="r2"><div><label>Person</label><select id="person"></select></div><div><label>Add Person</label><button onclick="addPerson()">Add</button></div></div>
-<div class="r2"><div><label>Pay Type</label><select id="payType" onchange="togglePayType();autoCalc()"><option value="hourly">Hourly</option><option value="project">Per Project</option></select></div><div><label>Status</label><select id="status"><option value="scheduled">Scheduled</option><option value="completed">Completed</option></select></div></div>
-<div class="r3"><div><label>In</label><input id="inTime" type="time" oninput="autoCalc()"></div><div><label>Out</label><input id="outTime" type="time" oninput="autoCalc()"></div><div><label>Hours</label><input id="hours" type="number" step="0.25" oninput="autoCalc(false)"></div></div>
-<div class="r2 hourlyFields"><div><label>Pay / Hour</label><input id="rate" type="number" step="0.01" value="20" oninput="autoCalc()"></div><div><label>Money Owed</label><input id="owed" type="number" step="0.01"></div></div>
-<div class="payProject"><label>Project Price / Money Owed</label><input id="projectPrice" type="number" step="0.01" oninput="owed.value=this.value"></div>
-<label>Materials / Tools Needed</label><textarea id="materialsNeeded" placeholder="What you think you'll need"></textarea>
-<label>Materials / Tools Actually Used</label><textarea id="materialsUsed" placeholder="What you actually used on the job"></textarea>
-<div class="r3"><div><label>Paid?</label><select id="paid" onchange="if(this.value==='yes'&&!g('received').value)g('received').value=g('owed').value; renderStats(); renderClientTotals();"><option value="no">No</option><option value="yes">Yes</option></select></div><div><label>How Paid</label><select id="howPaid"><option></option><option>Cash</option><option>Check</option><option>Cash App</option><option>PayPal</option><option>Venmo</option><option>Transfer</option><option>Other</option></select></div><div><label>Received</label><input id="received" type="number" step="0.01"></div></div>
-<label>Client Name</label>
-<input id="client" list="clientNames" oninput="showClientMatches()" onchange="maybeFillClient()">
-<datalist id="clientNames"></datalist>
-<div id="clientMatches" class="clientMatches"></div>
-<label>Client Address</label><input id="address">
-<label>Client Phone</label><input id="phone">
-
-<div class="clientInvoiceMini">
-  <h4>Client Duties / Invoices</h4>
-  <button class="blue" onclick="openInvoiceForCurrentClient()">+ Invoice / Duties for This Client</button>
-  <div id="clientInvoiceMiniList" class="clientInvoiceMiniList"></div>
-</div>
-
-<div class="clientTotals">
-  <div><span>Client Hours</span><b id="clientHours">0</b></div>
-  <div><span>Client Paid</span><b id="clientPaid">$0</b></div>
-  <div><span>Client Owed</span><b id="clientOwed">$0</b></div>
-</div>
-
-<label>Notes</label><textarea id="notes"></textarea>
-</div><div class="actions"><button class="active" onclick="saveJob()">Save</button><button onclick="clearForm(selected)">Clear</button><button class="danger" onclick="deleteJob()">Delete</button><span id="saveMsg" class="small"></span></div></aside>
-</div>
-<div class="chartPanel"><div class="chartTitle"><h2>Completed / Job Info Chart</h2><input id="search" placeholder="Search..." oninput="renderChart()" style="max-width:220px"></div>
-<div class="chartHead"><div>Date</div><div>Status</div><div>In</div><div>Out</div><div>Hrs</div><div>Owed</div><div>Paid</div><div>How Paid</div><div>Received</div><div>Needed</div><div>Used</div><div>Work</div><div>Client</div><div>Phone</div></div><div id="chartRows" class="chartRows"></div></div>
-</div>
-
-<div id="invoiceTab" class="invoicePage" style="display:none">
-  <div class="invoiceTop">
-    <h2>Invoices / Services</h2>
-    <div>
-      <button class="blue" onclick="newInvoice()">+ New Invoice</button>
-      <button onclick="exportInvoicesCSV()">Export Invoices</button>
-    </div>
-  </div>
-
-  <div class="invoiceLayout">
-    <div class="invoiceBuilder">
-      <h3>Service / Duty Builder</h3>
-      <input type="hidden" id="invoiceId">
-
-      <label>Client Name</label>
-      <input id="invoiceClient" list="invoiceClientNames" placeholder="Start typing client name..." onchange="invoiceFillClient()" oninput="renderInvoicePreview()">
-      <datalist id="invoiceClientNames"></datalist>
-
-      <div class="r2">
-        <div><label>Client Address</label><input id="invoiceAddress" oninput="renderInvoicePreview()"></div>
-        <div><label>Client Phone</label><input id="invoicePhone" oninput="renderInvoicePreview()"></div>
-      </div>
-
-      <label>Invoice / Job Date</label>
-      <input id="invoiceDate" type="date" onchange="renderInvoicePreview()">
-
-      <h4>SERVICES</h4>
-      <div id="serviceChecklist" class="simpleChecklist"></div>
-      <div class="serviceAddBox">
-        <input id="newServiceName" placeholder="Add service">
-        <button onclick="addService()">Add Service</button>
-      </div>
-
-      <h4>SUPPLIES</h4>
-      <div id="supplyChecklist" class="simpleChecklist"></div>
-      <div class="serviceAddBox">
-        <input id="newSupplyName" placeholder="Add supply, ex: trash bags">
-        <button onclick="addSupply()">Add Supply</button>
-      </div>
-
-      <h4>LABOR</h4>
-      <div id="laborChecklist" class="simpleChecklist"></div>
-      <div class="serviceAddBox">
-        <input id="newLaborName" placeholder="Add labor field, ex: drive time">
-        <button onclick="addLabor()">Add Labor Field</button>
-      </div>
-
-      <div class="invoiceTotalsBox">
-        <div><span>Subtotal</span><b id="invoiceSubtotal">$0.00</b></div>
-        <div><span>Paid</span><b id="invoicePaidDisplay">$0.00</b></div>
-        <div><span>Balance</span><b id="invoiceBalance">$0.00</b></div>
-      </div>
-
-      <div class="r3">
-        <div><label>Status</label><select id="invoiceStatus" onchange="calcInvoiceTotal()"><option value="unpaid">Unpaid</option><option value="paid">Paid</option></select></div>
-        <div><label>How Paid</label><select id="invoiceHowPaid" onchange="renderInvoicePreview()"><option></option><option>Cash</option><option>Check</option><option>Cash App</option><option>PayPal</option><option>Venmo</option><option>Transfer</option><option>Other</option></select></div>
-        <div><label>Amount Paid</label><input id="invoiceAmountPaid" type="number" step="0.01" oninput="calcInvoiceTotal()"></div>
-      </div>
-
-      <label>Notes</label>
-      <textarea id="invoiceNotes" placeholder="Extra notes" oninput="renderInvoicePreview()"></textarea>
-
-      <h4>Client Signature</h4>
-      <p class="small">Client signs here when job is completed and paid.</p>
-      <canvas id="signaturePad" class="signaturePad"></canvas>
-
-      <div class="actions">
-        <button onclick="clearSignature()">Clear Signature</button>
-        <button class="active" onclick="saveInvoice()">Save Invoice</button>
-        <button class="danger" onclick="deleteInvoice()">Delete Invoice</button>
-      </div>
-    </div>
-
-    <div class="invoicePreview">
-      <h3>Invoice Preview / Receipt</h3>
-      <div id="invoicePreviewBox" class="invoicePaper"></div>
-    </div>
-  </div>
-
-  <div class="allInvoices">
-    <h3>All Invoices</h3>
-    <div id="allInvoicesList"></div>
-  </div>
-</div>
-
+<div class="top"><h1>Work Planner</h1><div class="tabs"><button id="bPlan" class="on" onclick="tab('planner')">Planner</button><button id="bInv" onclick="tab('invoice')">Invoices</button><button onclick="exportCSV()">Export</button></div></div>
+<div id="planner">
+<div class="stats"><div class="stat">Hours<br><b id="stH">0</b></div><div class="stat">Paid<br><b id="stP">$0</b></div><div class="stat">Owed<br><b id="stO">$0</b></div></div>
+<div class="grid">
+<div class="card"><div class="top"><button onclick="month(-1)">‹</button><h2 id="calTitle"></h2><button onclick="month(1)">›</button></div><div id="cal"></div></div>
+<div class="card">
+<h2>DAY</h2><div id="dayTitle"></div><div id="dayList"></div>
+<input type="hidden" id="jid"><label>Date</label><input id="jdate" type="date"><label>Work</label><input id="jdesc">
+<div class="row"><div><label>Status</label><select id="jstatus"><option value="scheduled">Scheduled</option><option value="completed">Completed</option></select></div><div><label>Paid?</label><select id="jpaid"><option value="no">No</option><option value="yes">Yes</option></select></div></div>
+<div class="row3"><div><label>In</label><input id="jin" type="time" oninput="calcJob()"></div><div><label>Out</label><input id="jout" type="time" oninput="calcJob()"></div><div><label>Hours</label><input id="jhours" type="number" step="0.25"></div></div>
+<div class="row3"><div><label>Rate</label><input id="jrate" type="number" step="0.01" value="20" oninput="calcJob()"></div><div><label>Owed</label><input id="jowed" type="number" step="0.01"></div><div><label>Received</label><input id="jrec" type="number" step="0.01"></div></div>
+<label>Client</label><input id="jclient" list="clients" oninput="clientInvoices()"><datalist id="clients"></datalist><label>Address</label><input id="jaddr"><label>Phone</label><input id="jphone">
+<div class="card"><h3>Client Duties / Invoices</h3><button class="blue" onclick="invoiceForClient()">+ Invoice for This Client</button><div id="clientInv"></div></div>
+<label>Notes</label><textarea id="jnotes"></textarea><div class="row3"><button class="green" onclick="saveJob()">Save</button><button onclick="clearJob()">Clear</button><button class="red" onclick="delJob()">Delete</button></div>
+</div></div><div class="card"><h3>Jobs</h3><div id="jobs"></div></div></div>
+<div id="invoice" style="display:none">
+<div class="top"><h2>Invoices</h2><button class="blue" onclick="newInv()">+ New Invoice</button></div>
+<div class="grid"><div class="card">
+<input type="hidden" id="iid"><label>Client</label><input id="ic" list="clients"><label>Address</label><input id="ia"><label>Phone</label><input id="ip"><label>Date</label><input id="idate" type="date">
+<h3>SERVICES</h3><div id="svc"></div><div class="row"><input id="newSvc" placeholder="Add service"><button onclick="addSvc()">Add</button></div>
+<h3>SUPPLIES</h3><div id="sup"></div><div class="row"><input id="newSup" placeholder="Add supply"><button onclick="addSup()">Add</button></div>
+<h3>LABOR</h3><div id="lab"></div><div class="row"><input id="newLab" placeholder="Add labor field"><button onclick="addLab()">Add</button></div>
+<div class="stats"><div class="stat">Total<br><b id="it">$0</b></div><div class="stat">Paid<br><b id="ipaid">$0</b></div><div class="stat">Balance<br><b id="ibal">$0</b></div></div>
+<div class="row3"><div><label>Status</label><select id="istat"><option value="unpaid">Unpaid</option><option value="paid">Paid</option></select></div><div><label>How Paid</label><select id="ihow"><option></option><option>Cash</option><option>Check</option><option>Cash App</option><option>PayPal</option><option>Venmo</option><option>Transfer</option><option>Other</option></select></div><div><label>Amount Paid</label><input id="iamt" type="number" step="0.01" oninput="calcInv()"></div></div>
+<label>Notes</label><textarea id="inotes"></textarea><h3>Signature</h3><canvas id="sig" class="sig"></canvas><div class="row3"><button onclick="clearSig()">Clear</button><button class="green" onclick="saveInv()">Save Invoice</button><button class="red" onclick="delInv()">Delete</button></div>
+</div><div class="card"><h3>Preview</h3><div id="prev" class="paper"></div></div></div><div class="card"><h3>All Invoices</h3><div id="allInv"></div></div></div>
 <script>
-const STORAGE='work_planner_services_invoice_v2';
-let state=JSON.parse(localStorage.getItem(STORAGE)||'null')||{
- view:'month',current:'2026-05-01T12:00:00',selected:iso(new Date()),people:['Me'],
- jobs:[]};
-let view=state.view,current=new Date(state.current),selected=state.selected,people=state.people,jobs=state.jobs;
-function uid(){return (crypto&&crypto.randomUUID)?crypto.randomUUID():'id'+Date.now()+Math.random()}
-function g(id){return document.getElementById(id)}
-function iso(d){let x=new Date(d);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)}
-function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function money(n){return '$'+Number(n||0).toFixed(2)}
-function persist(){localStorage.setItem(STORAGE,JSON.stringify({view,current:current.toISOString(),selected,people,jobs}))}
-function calcHours(a,b){if(!a||!b)return'';let [ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);let mins=(bh*60+bm)-(ah*60+am);if(mins<0)mins+=1440;return (mins/60).toFixed(mins%60===0?0:2)}
-function cleanJob(j){return {id:j.id||uid(),date:j.date||selected,desc:j.desc||'',person:j.person||'Me',payType:j.payType||'hourly',status:j.status||'scheduled',inTime:j.inTime||'',outTime:j.outTime||'',hours:String(j.hours??''),rate:String(j.rate??20),owed:String(j.owed??''),projectPrice:String(j.projectPrice??''),materialsNeeded:j.materialsNeeded||'',materialsUsed:j.materialsUsed||'',paid:j.paid||'no',howPaid:j.howPaid||'',received:String(j.received??''),client:j.client||'',address:j.address||'',phone:j.phone||'',notes:j.notes||''}}
-jobs=jobs.map(cleanJob);
-function setView(v){view=v;persist();renderAll()}function today(){current=new Date();selected=iso(new Date());persist();renderAll()}
-function prev(){if(view==='month')current.setMonth(current.getMonth()-1);if(view==='week')current.setDate(current.getDate()-7);if(view==='day')current.setDate(current.getDate()-1);persist();renderAll()}
-function next(){if(view==='month')current.setMonth(current.getMonth()+1);if(view==='week')current.setDate(current.getDate()+7);if(view==='day')current.setDate(current.getDate()+1);persist();renderAll()}
-function weekStart(d){let x=new Date(d);x.setDate(x.getDate()-x.getDay());x.setHours(12,0,0,0);return x}
-function jobsOn(d){return jobs.filter(j=>j.date===d)}
-function titleText(){if(view==='month')return current.toLocaleDateString(undefined,{month:'long',year:'numeric'});if(view==='week')return 'Week of '+weekStart(current).toLocaleDateString();return current.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
-function eventText(j){return j.status==='completed'?`${j.desc||'Work'} ${j.hours||0}h ${money(j.owed)}`:`${j.desc||'Work'} ${j.inTime||''}`}
-function renderCal(){const names=['SUN','MON','TUE','WED','THU','FRI','SAT'];if(view==='month'){let y=current.getFullYear(),m=current.getMonth(),start=new Date(y,m,1,12);start.setDate(1-start.getDay());let html='<div class="days">'+names.map(n=>`<div class="dayname">${n}</div>`).join('')+'</div><div class="month">';for(let i=0;i<42;i++){let d=new Date(start);d.setDate(start.getDate()+i);let day=iso(d),arr=jobsOn(day),cls=['day',d.getMonth()!==m?'outside':'',day===selected?'selected':'',day===iso(new Date())?'today':''].join(' ');html+=`<div class="${cls}" onclick="selectDay('${day}')"><div class="num">${d.getDate()}</div>${arr.slice(0,3).map(j=>`<div class="event ${j.status==='completed'?'done':'unpaid'}" onclick="event.stopPropagation();loadJob('${j.id}')">${esc(eventText(j))}</div>`).join('')}</div>`}cal.innerHTML=html+'</div>'}else if(view==='week'){let st=weekStart(current),html='<div class="week">';for(let i=0;i<7;i++){let d=new Date(st);d.setDate(st.getDate()+i);let day=iso(d);html+=`<div class="weekbox" onclick="selectDay('${day}')"><b>${names[i]} ${d.getMonth()+1}/${d.getDate()}</b>${jobsOn(day).map(j=>`<div class="event ${j.status==='completed'?'done':'unpaid'}" onclick="event.stopPropagation();loadJob('${j.id}')">${esc(eventText(j))}</div>`).join('')||'<p class="small">No work</p>'}</div>`}cal.innerHTML=html+'</div>'}else{let day=iso(current);selected=day;cal.innerHTML=`<div class="daily"><div class="daybox" onclick="selectDay('${day}')"><h2>${current.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'})}</h2>${jobsOn(day).map(j=>`<div class="event ${j.status==='completed'?'done':'unpaid'}" onclick="event.stopPropagation();loadJob('${j.id}')">${esc(eventText(j))}</div>`).join('')||'<p class="small">No work yet. Hit + Job.</p>'}</div></div>`}}
-function renderSide(){let d=new Date(selected+'T12:00:00');sideDate.textContent=d.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric',year:'numeric'});let arr=jobsOn(selected);sideList.innerHTML=arr.length?arr.map(j=>`<div class="sideItem" onclick="loadJob('${j.id}')"><strong>${esc(j.desc||'Work')}</strong><span>${j.status} • ${j.inTime||'--'} • ${j.hours||0} hrs • ${money(j.owed)}</span></div>`).join(''):'<div class="small">No jobs for this day yet.</div>'}
-function renderPeople(){person.innerHTML=people.map(p=>`<option>${esc(p)}</option>`).join('')}
-function renderChart(){let q=(search.value||'').toLowerCase();let visible=jobs.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')).filter(j=>Object.values(j).join(' ').toLowerCase().includes(q));chartRows.innerHTML=visible.map(j=>`<div class="chartRow">
-<input type="date" value="${esc(j.date)}" onchange="quick('${j.id}','date',this.value)">
-<select onchange="quick('${j.id}','status',this.value)"><option value="scheduled" ${j.status==='scheduled'?'selected':''}>Scheduled</option><option value="completed" ${j.status==='completed'?'selected':''}>Completed</option></select>
-<input type="time" value="${esc(j.inTime)}" onchange="quick('${j.id}','inTime',this.value,true)">
-<input type="time" value="${esc(j.outTime)}" onchange="quick('${j.id}','outTime',this.value,true)">
-<input value="${esc(j.hours)}" onchange="quick('${j.id}','hours',this.value,true)">
-<input value="${esc(j.owed)}" onchange="quick('${j.id}','owed',this.value)">
-<select onchange="quick('${j.id}','paid',this.value)"><option value="no" ${j.paid!=='yes'?'selected':''}>No</option><option value="yes" ${j.paid==='yes'?'selected':''}>Yes</option></select>
-<input value="${esc(j.howPaid)}" onchange="quick('${j.id}','howPaid',this.value)">
-<input value="${esc(j.received)}" onchange="quick('${j.id}','received',this.value)">
-<textarea onchange="quick('${j.id}','materialsNeeded',this.value)">${esc(j.materialsNeeded)}</textarea>
-<textarea onchange="quick('${j.id}','materialsUsed',this.value)">${esc(j.materialsUsed)}</textarea>
-<textarea onchange="quick('${j.id}','desc',this.value)">${esc(j.desc)}</textarea>
-<input value="${esc(j.client)}" onchange="quick('${j.id}','client',this.value)">
-<input value="${esc(j.phone)}" onchange="quick('${j.id}','phone',this.value)">
-</div>`).join('')}
-function renderStats(){
- let worked=0, paidTotal=0, owedRemaining=0;
-
- jobs.forEach(j=>{
-   const hrs = Number(j.hours || 0);
-   const owed = Number(j.owed || 0);
-   let received = Number(j.received || 0);
-   const isPaid = String(j.paid || '').toLowerCase() === 'yes';
-   const isCompleted = String(j.status || '').toLowerCase() === 'completed';
-   const hasOutTime = !!j.outTime;
-
-   // Count work if it has hours and was completed, paid, has money received, or has an out time.
-   const countsAsWorked = hrs > 0 && (isCompleted || isPaid || received > 0 || hasOutTime);
-
-   if(countsAsWorked){
-     worked += hrs;
-   }
-
-   // If marked paid but received is blank, assume received equals owed.
-   if(isPaid && received === 0 && owed > 0){
-     received = owed;
-   }
-
-   paidTotal += received;
-
-   // Owed means still unpaid / remaining amount.
-   owedRemaining += Math.max(owed - received, 0);
- });
-
- g('sWorked').textContent = worked.toFixed(2);
- g('sPaid').textContent = money(paidTotal);
- g('sOwed').textContent = money(owedRemaining);
-}
-function renderAll(){title.textContent=titleText();mb.className=view==='month'?'active':'';wb.className=view==='week'?'active':'';db.className=view==='day'?'active':'';renderPeople();renderClientOptions();renderCal();renderSide();renderChart();renderStats();renderClientTotals();renderClientInvoiceMini();if(!g('date').value)clearForm(selected)}
-function selectDay(d){selected=d;let first=jobsOn(d)[0];first?fill(first):clearForm(d);persist();renderAll()}
-function togglePayType(){
- const payTypeVal=g('payType').value;
- document.querySelector('.payProject').style.display=payTypeVal==='project'?'block':'none';
- document.querySelector('.hourlyFields').style.display=payTypeVal==='hourly'?'grid':'none';
-}
-function autoCalc(fromTime=true){
- const inV=g('inTime').value, outV=g('outTime').value;
- if(fromTime){
-   const h=calcHours(inV,outV);
-   if(h) g('hours').value=h;
- }
- if(g('payType').value==='hourly'){
-   g('owed').value=(Number(g('hours').value||0)*Number(g('rate').value||0)).toFixed(2);
- }else{
-   g('owed').value=g('projectPrice').value || g('owed').value;
- }
- if(g('paid').value==='yes' && !g('received').value) g('received').value=g('owed').value;
-}
-function formJob(){
- autoCalc(false);
- return cleanJob({
-   id:g('id').value||uid(),
-   date:g('date').value||selected,
-   desc:g('desc').value,
-   person:g('person').value,
-   payType:g('payType').value,
-   status:g('status').value,
-   inTime:g('inTime').value,
-   outTime:g('outTime').value,
-   hours:g('hours').value,
-   rate:g('rate').value,
-   owed:g('owed').value,
-   projectPrice:g('projectPrice').value,
-   materialsNeeded:g('materialsNeeded').value,
-   materialsUsed:g('materialsUsed').value,
-   paid:g('paid').value,
-   howPaid:g('howPaid').value,
-   received:g('received').value,
-   client:g('client').value,
-   address:g('address').value,
-   phone:g('phone').value,
-   notes:g('notes').value
- });
-}
-function fill(j){
- j=cleanJob(j);
- selected=j.date;
- g('id').value=j.id;
- g('date').value=j.date;
- g('desc').value=j.desc;
- g('person').value=j.person;
- g('payType').value=j.payType;
- g('status').value=j.status;
- g('inTime').value=j.inTime;
- g('outTime').value=j.outTime;
- g('hours').value=j.hours;
- g('rate').value=j.rate;
- g('owed').value=j.owed;
- g('projectPrice').value=j.projectPrice;
- g('materialsNeeded').value=j.materialsNeeded;
- g('materialsUsed').value=j.materialsUsed;
- g('paid').value=j.paid;
- g('howPaid').value=j.howPaid;
- g('received').value=j.received;
- g('client').value=j.client;
- g('address').value=j.address;
- g('phone').value=j.phone;
- g('notes').value=j.notes;
- togglePayType();
- renderClientTotals();
-}
-function clearForm(d=selected){
- g('id').value='';
- g('date').value=d;
- g('desc').value='';
- g('person').value=people[0]||'Me';
- g('payType').value='hourly';
- g('status').value='scheduled';
- g('inTime').value='';
- g('outTime').value='';
- g('hours').value='';
- g('rate').value=g('rate').value||20;
- g('owed').value='';
- g('projectPrice').value='';
- g('materialsNeeded').value='';
- g('materialsUsed').value='';
- g('paid').value='no';
- g('howPaid').value='';
- g('received').value='';
- g('client').value='';
- g('address').value='';
- g('phone').value='';
- g('notes').value='';
- togglePayType();
- renderClientTotals();
-}
-function newJob(){clearForm(selected);desc.focus()}
-function saveJob(){
- const j=formJob();
- const idx=jobs.findIndex(x=>x.id===j.id);
- if(idx>=0) jobs[idx]=j; else jobs.push(j);
- selected=j.date;
- persist();
- fill(j);
- const msg=g('saveMsg'); if(msg){msg.textContent='Saved'; setTimeout(()=>msg.textContent='',1200);}
- renderAll();
-}
-function deleteJob(){
- const currentId=g('id').value;
- if(!currentId) return clearForm(selected);
- jobs=jobs.filter(j=>j.id!==currentId);
- clearForm(selected);
- persist();
- renderStats();
- renderAll();
-}
-function loadJob(jobId){
- const j=jobs.find(x=>x.id===jobId);
- if(j){
-   selected=j.date;
-   fill(j);
-   persist();
-   renderAll();
- }
-}
-function quick(jobId,field,value,recalc=false){
- const j=jobs.find(x=>x.id===jobId);
- if(!j) return;
- j[field]=value;
- if(recalc){
-   if(field==='inTime'||field==='outTime') j.hours=calcHours(j.inTime,j.outTime);
-   if(j.payType==='hourly') j.owed=(Number(j.hours||0)*Number(j.rate||0)).toFixed(2);
- }
- if(field==='paid' && value==='yes' && !j.received) j.received=j.owed;
- persist();
- renderStats();
- renderAll();
-}
-function addPerson(){let n=prompt('Person name?');if(n&&!people.includes(n.trim()))people.push(n.trim());persist();renderAll()}
-
-function clientMap(){
- let map={};
- jobs.forEach(j=>{
-   const name=(j.client||'').trim();
-   if(!name)return;
-   if(!map[name]) map[name]={name, address:j.address||'', phone:j.phone||'', hours:0, paid:0, owed:0};
-   if(j.address) map[name].address=j.address;
-   if(j.phone) map[name].phone=j.phone;
-   map[name].hours += Number(j.hours||0);
-   map[name].paid += Number(j.received||0);
-   map[name].owed += Math.max(Number(j.owed||0)-Number(j.received||0),0);
- });
- return map;
-}
-function renderClientOptions(){
- const map=clientMap();
- const list=document.getElementById('clientNames');
- if(!list)return;
- list.innerHTML=Object.keys(map).sort().map(n=>`<option value="${esc(n)}"></option>`).join('');
-}
-function showClientMatches(){
- const q=(client.value||'').trim().toLowerCase();
- const box=document.getElementById('clientMatches');
- if(!box)return;
- if(!q){box.innerHTML='';renderClientTotals();return;}
- const map=clientMap();
- const matches=Object.values(map).filter(c=>c.name.toLowerCase().startsWith(q)).slice(0,5);
- box.innerHTML=matches.map(c=>`<button type="button" onclick="fillClient('${esc(c.name).replaceAll("'","&#039;")}')">${esc(c.name)}</button>`).join('');
- renderClientTotals();
-}
-function maybeFillClient(){
- const name=(client.value||'').trim();
- const map=clientMap();
- if(map[name]) fillClient(name);
- else renderClientTotals();
-}
-function fillClient(name){
- const map=clientMap();
- const c=map[name];
- if(!c)return;
- client.value=c.name;
- address.value=c.address||'';
- phone.value=c.phone||'';
- const box=document.getElementById('clientMatches');
- if(box)box.innerHTML='';
- renderClientTotals();
-}
-function renderClientTotals(){
- const name=(client.value||'').trim();
- const map=clientMap();
- const c=map[name];
- const ch=document.getElementById('clientHours'), cp=document.getElementById('clientPaid'), co=document.getElementById('clientOwed');
- if(!ch||!cp||!co)return;
- if(c){
-   ch.textContent=c.hours.toFixed(2);
-   cp.textContent=money(c.paid);
-   co.textContent=money(c.owed);
- }else{
-   ch.textContent='0';
-   cp.textContent=money(0);
-   co.textContent=money(0);
- }
-}
-
-function exportCSV(){let h=['Date','Description','Person','Pay Type','Status','In','Out','Hours','Rate','Owed','Materials Needed','Materials Used','Paid','How Paid','Received','Client','Address','Phone','Notes'];let k=['date','desc','person','payType','status','inTime','outTime','hours','rate','owed','materialsNeeded','materialsUsed','paid','howPaid','received','client','address','phone','notes'];let csv=[h.join(',')].concat(jobs.map(j=>k.map(x=>`"${String(j[x]??'').replaceAll('"','""')}"`).join(','))).join('\n');let blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='work-planner-dashboard.csv';a.click();URL.revokeObjectURL(url)}
-renderAll();
-document.addEventListener('input',function(e){
- if(['hours','owed','received','client','address','phone'].includes(e.target.id)){
-   renderStats();
-   renderClientTotals();
- }
-});
-document.addEventListener('change',function(e){
- if(['hours','owed','received','client','address','phone'].includes(e.target.id)){
-   renderStats();
-   renderClientTotals();
- }
-});
+const KEY='bird_planner_clean_v1';let db=JSON.parse(localStorage.getItem(KEY)||'null')||{jobs:[],invoices:[],services:['Weed Eating','Mowing','Trimming','Leaf Blowing','Gutters','Debris Removal','Landscaping','Painting','Repair','Organizing','Moving','Hauling'],supplies:['Gas','String','Oil'],labor:['Lot Size','Time']};let cur=new Date(),sel=iso(new Date()),AS=[],AU=[],AL=[],ctx,can,draw=false;
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}function id(){return crypto.randomUUID?crypto.randomUUID():'id'+Date.now()+Math.random()}function iso(d){let x=new Date(d);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)}function cash(n){return '$'+Number(n||0).toFixed(2)}function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}function svcAmt(s){return s.type==='hourly'?Number(s.hours||0)*Number(s.rate||0):Number(s.amount||0)}function invTotals(){let st=AS.reduce((a,s)=>a+svcAmt(s),0),su=AU.reduce((a,s)=>a+Number(s.cost||0),0),raw=AL.reduce((a,l)=>a+Number(l.price||0),0),hour=AS.some(s=>s.type==='hourly'),lab=hour?0:raw;return{st,su,raw,lab,hour,total:st+su+lab}}
+function tab(t){planner.style.display=t==='planner'?'block':'none';invoice.style.display=t==='invoice'?'block':'none';bPlan.className=t==='planner'?'on':'';bInv.className=t==='invoice'?'on':'';if(t==='invoice'){renderInv();allInvoices();setupSig();if(!idate.value)newInv()}}
+function render(){stats();calendar();dayPanel();jobList();clientList();clientInvoices()}function stats(){let h=0,p=0,o=0;db.jobs.forEach(j=>{if(j.status==='completed'){h+=Number(j.hours||0);p+=Number(j.rec||0);o+=Math.max(Number(j.owed||0)-Number(j.rec||0),0)}});stH.textContent=h.toFixed(2);stP.textContent=cash(p);stO.textContent=cash(o)}
+function calendar(){calTitle.textContent=cur.toLocaleDateString(undefined,{month:'long',year:'numeric'});let y=cur.getFullYear(),m=cur.getMonth(),start=new Date(y,m,1,12);start.setDate(1-start.getDay());let names=['SUN','MON','TUE','WED','THU','FRI','SAT'];let h='<div class=days>'+names.map(n=>`<div class=dn>${n}</div>`).join('')+'</div><div class=month>';for(let i=0;i<42;i++){let d=new Date(start);d.setDate(start.getDate()+i);let day=iso(d),js=db.jobs.filter(j=>j.date===day);h+=`<div class="day ${d.getMonth()!==m?'outside':''} ${day===sel?'sel':''} ${day===iso(new Date())?'today':''}" onclick="pick('${day}')"><small>${d.getDate()}</small>${js.slice(0,3).map(j=>`<div class="ev ${j.status==='completed'?'done':''}" onclick="event.stopPropagation();loadJob('${j.id}')">${esc(j.desc)} ${j.status==='completed'?(j.hours||0)+'h':(j.in||'')}</div>`).join('')}</div>`}cal.innerHTML=h+'</div>'}
+function month(n){cur.setMonth(cur.getMonth()+n);calendar()}function pick(d){sel=d;clearJob(d);let j=db.jobs.find(x=>x.date===d);if(j)loadJob(j.id);render()}
+function dayPanel(){dayTitle.textContent=new Date(sel+'T12:00').toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});let js=db.jobs.filter(j=>j.date===sel);dayList.innerHTML=js.length?js.map(j=>`<div class=card onclick="loadJob('${j.id}')">${esc(j.desc)}<br><small>${j.status} • ${j.hours||0}h • ${cash(j.owed)}</small></div>`).join(''):'<p class=small>No jobs.</p>'}
+function calcHours(a,b){if(!a||!b)return'';let[ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number),mins=bh*60+bm-ah*60-am;if(mins<0)mins+=1440;return(mins/60).toFixed(mins%60?2:0)}function calcJob(){let h=calcHours(jin.value,jout.value);if(h)jhours.value=h;if(jhours.value&&jrate.value)jowed.value=(Number(jhours.value)*Number(jrate.value)).toFixed(2)}
+function clearJob(d=sel){jid.value='';jdate.value=d;jdesc.value='';jstatus.value='scheduled';jpaid.value='no';jin.value='';jout.value='';jhours.value='';jowed.value='';jrec.value='';jclient.value='';jaddr.value='';jphone.value='';jnotes.value='';clientInvoices()}
+function saveJob(){calcJob();let j={id:jid.value||id(),date:jdate.value||sel,desc:jdesc.value,status:jstatus.value,paid:jpaid.value,in:jin.value,out:jout.value,hours:jhours.value,rate:jrate.value,owed:jowed.value,rec:jrec.value,client:jclient.value,addr:jaddr.value,phone:jphone.value,notes:jnotes.value};let i=db.jobs.findIndex(x=>x.id===j.id);i>=0?db.jobs[i]=j:db.jobs.push(j);sel=j.date;jid.value=j.id;save();render()}
+function loadJob(x){let j=db.jobs.find(a=>a.id===x);if(!j)return;sel=j.date;jid.value=j.id;jdate.value=j.date;jdesc.value=j.desc;jstatus.value=j.status;jpaid.value=j.paid;jin.value=j.in;jout.value=j.out;jhours.value=j.hours;jrate.value=j.rate||20;jowed.value=j.owed;jrec.value=j.rec;jclient.value=j.client;jaddr.value=j.addr;jphone.value=j.phone;jnotes.value=j.notes;render()}
+function delJob(){if(!jid.value)return;db.jobs=db.jobs.filter(j=>j.id!==jid.value);save();clearJob();render()}function jobList(){jobs.innerHTML=db.jobs.map(j=>`<div>${esc(j.date)} • ${esc(j.desc)} • ${j.status} • ${j.hours||0}h • ${cash(j.owed)} • ${esc(j.client)}</div>`).join('')||'<p class=small>No jobs yet.</p>'}
+function clientList(){let n=new Set();db.jobs.forEach(j=>j.client&&n.add(j.client));db.invoices.forEach(i=>i.client&&n.add(i.client));let opts=[...n].map(x=>`<option value="${esc(x)}"></option>`).join('');clients.innerHTML=opts;invoiceClientList.innerHTML=opts}
+function clientInvoices(){let arr=db.invoices.filter(i=>i.client===jclient.value.trim());clientInv.innerHTML=arr.length?arr.map(i=>`<div class="clientInvoiceCard ${i.status}" onclick="tab('invoice');loadInv('${i.id}')">${i.date} • ${cash(i.total)} • ${i.status}</div>`).join(''):'<p class=small>No invoices.</p>'}function invoiceForClient(){tab('invoice');newInv();ic.value=jclient.value;ia.value=jaddr.value;ip.value=jphone.value;preview()}
+function addSvc(){let n=newSvc.value.trim();if(n&&!db.services.includes(n))db.services.push(n);newSvc.value='';save();renderInv()}function addSup(){let n=newSup.value.trim();if(n&&!db.supplies.includes(n))db.supplies.push(n);newSup.value='';save();renderInv()}function addLab(){let n=newLab.value.trim();if(n&&!db.labor.includes(n))db.labor.push(n);newLab.value='';save();renderInv()}function foc(arr,n,obj){let x=arr.find(a=>a.name===n);if(!x){x={name:n,...obj};arr.push(x)}return x}function rem(arr,n){let i=arr.findIndex(a=>a.name===n);if(i>=0)arr.splice(i,1)}function sq(s){return String(s).replaceAll("\\","\\\\").replaceAll("'","\\'")}
+function renderInv(){renderSvc();renderSup();renderLab();calcInv()}function renderSvc(){svc.innerHTML=db.services.map(n=>{let x=AS.find(a=>a.name===n)||{},on=AS.some(a=>a.name===n),type=x.type||'flat';return`<div class=item><div class=itemHead><input type=checkbox ${on?'checked':''} onchange="this.checked?foc(AS,'${sq(n)}',{type:'flat'}):rem(AS,'${sq(n)}');renderInv()"><b>${esc(n)}</b></div><div class=priceGrid><input placeholder="lot/details" value="${esc(x.details||'')}" oninput="foc(AS,'${sq(n)}',{type:'flat'}).details=this.value;preview()"><select onchange="foc(AS,'${sq(n)}',{type:'flat'}).type=this.value;renderInv()"><option value=flat ${type==='flat'?'selected':''}>Flat</option><option value=job ${type==='job'?'selected':''}>Per Job</option><option value=hourly ${type==='hourly'?'selected':''}>Hourly</option></select><input type=number step=.25 placeholder=hrs ${type==='hourly'?'':'disabled'} value="${esc(x.hours||'')}" oninput="foc(AS,'${sq(n)}',{type:'hourly'}).hours=this.value;calcInv()"><input type=number step=.01 placeholder=rate ${type==='hourly'?'':'disabled'} value="${esc(x.rate||'')}" oninput="foc(AS,'${sq(n)}',{type:'hourly'}).rate=this.value;calcInv()"><input type=number step=.01 placeholder=amount ${type==='hourly'?'readonly':''} value="${type==='hourly'?svcAmt(x).toFixed(2):esc(x.amount||'')}" oninput="foc(AS,'${sq(n)}',{type:'flat'}).amount=this.value;calcInv()"></div></div>`}).join('')+`<div class=mini>Services: ${cash(AS.reduce((a,s)=>a+svcAmt(s),0))}</div>`}
+function renderSup(){sup.innerHTML=db.supplies.map(n=>{let x=AU.find(a=>a.name===n)||{},on=AU.some(a=>a.name===n);return`<div class=supplyGrid><input type=checkbox ${on?'checked':''} onchange="this.checked?foc(AU,'${sq(n)}',{}):rem(AU,'${sq(n)}');renderInv()"><b>${esc(n)}</b><input placeholder=used value="${esc(x.used||'')}" oninput="foc(AU,'${sq(n)}',{}).used=this.value;preview()"><input type=number step=.01 placeholder=cost value="${esc(x.cost||'')}" oninput="foc(AU,'${sq(n)}',{}).cost=this.value;calcInv()"></div>`}).join('')+`<div class=mini>Supplies: ${cash(AU.reduce((a,s)=>a+Number(s.cost||0),0))}</div>`}
+function renderLab(){lab.innerHTML=db.labor.map(n=>{let x=AL.find(a=>a.name===n)||{},on=AL.some(a=>a.name===n);return`<div class=laborGrid><input type=checkbox ${on?'checked':''} onchange="this.checked?foc(AL,'${sq(n)}',{}):rem(AL,'${sq(n)}');renderInv()"><b>${esc(n)}</b><input placeholder=value value="${esc(x.value||'')}" oninput="foc(AL,'${sq(n)}',{}).value=this.value;preview()"><input type=number step=.01 placeholder=labor value="${esc(x.price||'')}" oninput="foc(AL,'${sq(n)}',{}).price=this.value;calcInv()"></div>`}).join('')+`<div class=mini>Labor: ${cash(AL.reduce((a,l)=>a+Number(l.price||0),0))}</div>`}
+function calcInv(){let t=invTotals(),paid=Number(iamt.value||0);it.textContent=cash(t.total);ipaid.textContent=cash(paid);ibal.textContent=cash(Math.max(t.total-paid,0));if(paid>=t.total&&t.total>0)istat.value='paid';preview()}function newInv(){iid.value='';ic.value='';ia.value='';ip.value='';idate.value=iso(new Date());istat.value='unpaid';ihow.value='';iamt.value='';inotes.value='';AS=[];AU=[];AL=[];renderInv();clearSig(false)}
+function invObj(){let t=invTotals(),paid=Number(iamt.value||0);return{id:iid.value||id(),client:ic.value,addr:ia.value,phone:ip.value,date:idate.value,status:istat.value,how:ihow.value,paid,amountPaid:paid,balance:Math.max(t.total-paid,0),total:t.total,hasHourly:t.hour,services:structuredClone(AS),supplies:structuredClone(AU),labor:structuredClone(AL),notes:inotes.value,signature:can?can.toDataURL('image/png'):''}}
+function saveInv(){let inv=invObj(),i=db.invoices.findIndex(x=>x.id===inv.id);i>=0?db.invoices[i]=inv:db.invoices.push(inv);iid.value=inv.id;save();allInvoices();clientInvoices();preview();alert('Invoice saved')}function loadInv(x){let inv=db.invoices.find(i=>i.id===x);if(!inv)return;iid.value=inv.id;ic.value=inv.client;ia.value=inv.addr;ip.value=inv.phone;idate.value=inv.date;istat.value=inv.status;ihow.value=inv.how;iamt.value=inv.amountPaid;inotes.value=inv.notes;AS=structuredClone(inv.services||[]);AU=structuredClone(inv.supplies||[]);AL=structuredClone(inv.labor||[]);renderInv();setupSig();clearSig(false);if(inv.signature){let im=new Image();im.onload=()=>ctx.drawImage(im,0,0,can.width,can.height);im.src=inv.signature}}
+function delInv(){if(!iid.value)return;db.invoices=db.invoices.filter(i=>i.id!==iid.value);save();newInv();allInvoices();clientInvoices()}function preview(){let inv=invObj();let sr=inv.services.map(s=>`<div class=line><div><b>${esc(s.name)}</b><br><small>${esc(s.details||'')} ${s.type==='hourly'?`— ${s.hours||0} hrs × ${cash(s.rate||0)}/hr`:s.type==='job'?'— per job':'— flat'}</small></div><div>${cash(svcAmt(s))}</div></div>`).join(''),ur=inv.supplies.map(s=>`<div class=line><div><b>${esc(s.name)}</b><br><small>Used: ${esc(s.used||'')}</small></div><div>${cash(s.cost)}</div></div>`).join(''),lr=inv.labor.map(l=>`<div class=line><div><b>${esc(l.name)}</b><br><small>${esc(l.value||'')}${inv.hasHourly?' — tracked only':''}</small></div><div>${inv.hasHourly?'Included':cash(l.price)}</div></div>`).join('');prev.innerHTML=`<h2>Invoice / Receipt</h2><p><b>Date:</b> ${esc(inv.date)}<br><b>Client:</b> ${esc(inv.client)}<br><b>Phone:</b> ${esc(inv.phone)}<br><b>Address:</b> ${esc(inv.addr)}</p>${sr?'<h3>Services</h3>'+sr:''}${ur?'<h3>Supplies</h3>'+ur:''}${lr?'<h3>Labor</h3>'+lr:''}${inv.hasHourly?'<p><small><b>Note:</b> Labor is tracked only because hourly pricing already includes labor.</small></p>':''}<h3>Total Due: ${cash(inv.total)}</h3><p><b>Paid:</b> ${cash(inv.paid)} ${inv.how?`by ${esc(inv.how)}`:''}<br><b>Still Owed:</b> ${cash(inv.balance)}<br><b>Status:</b> ${esc(inv.status)}</p>${inv.notes?`<p>${esc(inv.notes)}</p>`:''}<p><b>Signature:</b></p>${can?`<img src="${can.toDataURL('image/png')}" style="max-width:100%;border:1px solid #ccc">`:''}`}
+function allInvoices(){allInv.innerHTML=db.invoices.map(i=>`<div class="invoiceCard ${i.status}" onclick="loadInv('${i.id}')">${esc(i.date)} • ${esc(i.client)} • ${cash(i.total)} • ${i.status}</div>`).join('')||'<p>No invoices yet.</p>'}
+function exportCSV(){download('planner_backup.json',JSON.stringify(db,null,2))}function download(n,t){let b=new Blob([t],{type:'text/plain'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;a.click();URL.revokeObjectURL(u)}
+function setupSig(){can=sig;if(!can)return;let r=can.getBoundingClientRect();can.width=Math.max(300,Math.floor(r.width*2));can.height=260;ctx=can.getContext('2d');ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#111';can.onpointerdown=e=>{draw=true;let p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};can.onpointermove=e=>{if(!draw)return;let p=pt(e);ctx.lineTo(p.x,p.y);ctx.stroke()};can.onpointerup=()=>{draw=false;preview()};can.onpointerleave=()=>draw=false}function pt(e){let r=can.getBoundingClientRect();return{x:(e.clientX-r.left)*(can.width/r.width),y:(e.clientY-r.top)*(can.height/r.height)}}function clearSig(up=true){if(!ctx)setupSig();if(ctx){ctx.clearRect(0,0,can.width,can.height);if(up)preview()}}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}))}
+render();
 </script>
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+</body></html>

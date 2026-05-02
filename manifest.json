@@ -1,11 +1,10 @@
 {
-  "name": "Work Planner",
+  "name": "Bird Work Planner",
   "short_name": "Planner",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#050505",
   "theme_color": "#050505",
-  "description": "Offline work planner with calendar, jobs, clients, paid and owed tracking.",
+  "background_color": "#050505",
   "icons": [
     {
       "src": "icon-192.png",
